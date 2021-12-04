@@ -1,0 +1,10 @@
+# A/B test
+
+A/B test is used for testing which version of product can give you a preferable outcome by setting two versions of a product/test with **only one** variable is different (which is version A and version B). A is usually the "current version" and B is often the "improved version".
+
+## Scenario
+A: _Offer ends this Saturday! Please use promotion code A_  
+B: _The offer is about to end, please use promotion code B_  
+Send these message to a population and see which one get more clicks or sell more products. For a more persuasive result, a statistical test should be used to test if it is a significant result.  
+  
+## Example
