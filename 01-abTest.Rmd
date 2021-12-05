@@ -2,9 +2,132 @@
 
 A/B test is used for testing which version of product can give you a preferable outcome by setting two versions of a product/test with **only one** variable is different (which is version A and version B). A is usually the "current version" and B is often the "improved version".
 
-## Scenario
+## Scenario  
+For someone who wants to test new feature on product.  
 A: _Offer ends this Saturday! Please use promotion code A_  
 B: _The offer is about to end, please use promotion code B_  
 Send these message to a population and see which one get more clicks or sell more products. For a more persuasive result, a statistical test should be used to test if it is a significant result.  
   
-## Example
+## Case study  
+[ref](https://www.geeksforgeeks.org/ab-testing-with-r-programming/)
+  
+In short, we want to test two variant design on a hotel booking website. Based on result, make recommendation to your stakeholders.
+```{r load data}
+library(tidyverse)
+urlfile <- "https://raw.githubusercontent.com/etomaa/A-B-Testing/master/data/Website%20Results.csv"
+df <- read_csv(url(urlfile), show_col_types = FALSE)
+glimpse(df)
+```
+_variant A_: current website (control group)  
+_variant B_: experimental group (to see if new feature increase the conversion)  
+_converted_: if **TRUE**, it means that the customer completes bookings and it's going to show **FALSE** when the customer visits the sites but not makes a booking.  
+  
+Test Hypothesis:  
+- Null hypothesis: Pcont_A = Pcont_B  
+- Alternative hypothesis: Pcont_A != Pcont_B
+```{r conversion rates}
+# conversion rate A
+conversion_subset_A <- df %>% 
+    filter(variant == "A" & converted == "TRUE")
+conversions_A <- nrow(conversion_subset_A)
+visitors_A <- nrow(df %>%
+    filter(variant == "A"))
+conv_rate_A <- (conversions_A/visitors_A)
+
+# conversion rate B
+conversion_subset_B <- df %>% 
+    filter(variant == "B" & converted == "TRUE")
+conversions_B <- nrow(conversion_subset_B)
+visitors_B <- nrow(df %>%
+    filter(variant == "B"))
+conv_rate_B <- (conversions_B/visitors_B)
+
+print(paste0("conversion rates of A and B are ", round(conv_rate_A, 4), " and ", round(conv_rate_B, 4)))
+```
+Then we compute the relative uplift using the conversion rates A & B.
+```{r uplift}
+uplift <- (conv_rate_B - conv_rate_A) / conv_rate_A * 100
+uplift
+```
+B is better 83% than A. This is high enough to decide a winner. However, we need to use statistical methods to give a more precise result.
+```{r statistical analysis}
+# Pooled sample proportion for variants A & B
+p_pool <- (conversions_A + conversions_B) / (visitors_A +
+                                             visitors_B)
+# Let's compute Standard error for variants A & B (SE_pool)
+SE_pool <- sqrt(p_pool * (1 - p_pool) * ((1 / visitors_A) + (1 / visitors_B)))
+  
+# Let's compute the margin of error for the pool
+MOE <- SE_pool * qnorm(0.975)
+
+# Point Estimate or Difference in proportion
+d_hat <- conv_rate_B - conv_rate_A
+
+# compute the Z-score so we can determine the p-value
+z_score <- d_hat / SE_pool
+
+cat(paste0("The pooled probabilty is ", round(p_pool, 4), ".\nStandard error is ", 
+       round(SE_pool, 4), ".\nMargin of error is ", round(MOE, 4), 
+       ".\nDifference in proportion of variants A & B is ", round(d_hat,4), 
+       ".\nZ score is ", round(z_score, 4)))
+```
+Using Z-score, we can quickly determine the p-value via a look-up table, or using code below. Also conpute the confidence interval for the pool
+```{r p value}
+p_value <- pnorm(q = -z_score, mean = 0, sd = 1) * 2
+ci <- c(d_hat - MOE, d_hat + MOE)
+
+# confidence interval of variant A
+X_hat_A <- conversions_A / visitors_A
+se_hat_A <- sqrt(X_hat_A * (1 - X_hat_A) / visitors_A) 
+ci_A <- c(X_hat_A - qnorm(0.975) * se_hat_A, X_hat_A
+          + qnorm(0.975) * se_hat_A) 
+
+# confidence interval of variant B
+X_hat_B <- conversions_B / visitors_B
+se_hat_B <- sqrt(X_hat_B * (1 - X_hat_B) / visitors_B) 
+ci_B <- c(X_hat_B - qnorm(0.975) * se_hat_B, 
+          X_hat_B + qnorm(0.975) * se_hat_B)
+
+cat(paste0("p value is ", round(p_value, 4), "\nConfidence interval is ", 
+           list(round(ci, 4)), "\nConfidence interval of A is ", 
+           list(round(ci_A, 4)),"\nConfidence interval of B is ", 
+           list(round(ci_B, 4))))
+```
+Show the computation result in table:
+```{r summary}
+vis_result_pool <- data.frame(
+  metric = c(
+    'Estimated Difference',
+    'Relative Uplift(%)',
+    'pooled sample proportion',
+    'Standard Error of Difference',
+    'z_score',
+    'p-value',
+    'Margin of Error',
+    'CI-lower',
+    'CI-upper'),
+  value = c(
+    conv_rate_B - conv_rate_A,
+    uplift,
+    p_pool,
+    SE_pool,
+    z_score,
+    p_value,
+    MOE,
+    ci[1],
+    ci[2]
+  ))
+vis_result_pool
+```
+
+> **Recommendation and Conclusion**  
+    * Variant A has 20 conversions and 721 hits whereas Variant B has 37 conversions and 730 hits.  
+    * Relative uplift of 82.72% based on a variant A conversion rate is 2.77% and for B is 5.07%. Hence, variant B is better than A by 82.72%.  
+    * For this analysis P-value computed was 0.02448. Hence, there is strong statistical significance in test results.  
+    * From the above results that depict strong statistical significance. You should reject the null hypothesis and proceed with the launch.  
+    * Therefore, Accept Variant B and you can roll it to the users for 100%.  
+  
+    
+        
+> **Limitations**  
+It is one of the tools for conversion optimization and it’s not an independent solution and it’s not going to fix all the conversion issues of ours and it can’t fix the issues as you get with messy data and you need to perform more than just an A/B test to improve on conversions. 

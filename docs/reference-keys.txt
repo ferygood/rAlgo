@@ -5,7 +5,7 @@ thm:tri
 about
 ab-test
 scenario
-example
+case-study
 cross
 chapters-and-sub-chapters
 captioned-figures-and-tables
