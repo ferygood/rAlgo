@@ -1,4 +1,5 @@
 # A/B test
+`r Sys.Date()` updated  
 
 A/B test is used for testing which version of product can give you a preferable outcome by setting two versions of a product/test with **only one** variable is different (which is version A and version B). A is usually the "current version" and B is often the "improved version".
 
