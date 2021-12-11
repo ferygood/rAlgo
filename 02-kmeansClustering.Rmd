@@ -1,0 +1,22 @@
+# K-means
+`r Sys.Date()` updated  
+
+K-means clustering: It is a method to cluster n points into k clusters based on the means of shortest distance. (cautsion: do not confused it with K-nearest clustering)
+
+```{r}
+# use kmeans from stats package
+x <- rbind(matrix(rnorm(100, sd = 0.3), ncol = 2),
+           matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2))
+colnames(x) <- c("x", "y")
+(cl <- kmeans(x, 2))
+```
+
+There are 7 Avaliable components you can access it.    
+Plot the clustering result
+```{r}
+plot(x, col=cl$cluster)
+#points(cl$centers, col = 1:2, pch = 8, cex=2)
+points(cl$centers, col = c("blue", "green"), pch=8, cex=2)
+```
+
+

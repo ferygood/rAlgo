@@ -1,14 +1,12 @@
-fig:nice-fig
-tab:nice-tab
 eq:binom
 thm:tri
+fig:nice-fig
+tab:nice-tab
 about
 ab-test
 scenario
 case-study
-cross
-chapters-and-sub-chapters
-captioned-figures-and-tables
+k-means
 parts
 footnotes-and-citations
 footnotes
@@ -21,3 +19,6 @@ sharing-your-book
 publishing
 pages
 metadata-for-sharing
+cross
+chapters-and-sub-chapters
+captioned-figures-and-tables
