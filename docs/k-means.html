@@ -219,41 +219,155 @@ div.csl-indent {
 <div id="k-means" class="section level1" number="3">
 <h1><span class="header-section-number">Chapter 3</span> K-means</h1>
 <p>2021-12-11 updated</p>
-<p>K-means clustering: It is a method to cluster n points into k clusters based on the means of shortest distance. (cautsion: do not confused it with K-nearest clustering)</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="k-means.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use kmeans from stats package</span></span>
-<span id="cb17-2"><a href="k-means.html#cb17-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="at">sd =</span> <span class="fl">0.3</span>), <span class="at">ncol =</span> <span class="dv">2</span>),</span>
-<span id="cb17-3"><a href="k-means.html#cb17-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.3</span>), <span class="at">ncol =</span> <span class="dv">2</span>))</span>
-<span id="cb17-4"><a href="k-means.html#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(x) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;x&quot;</span>, <span class="st">&quot;y&quot;</span>)</span>
-<span id="cb17-5"><a href="k-means.html#cb17-5" aria-hidden="true" tabindex="-1"></a>(cl <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(x, <span class="dv">2</span>))</span></code></pre></div>
-<pre><code>## K-means clustering with 2 clusters of sizes 50, 50
+<p>K-means clustering: It is a method to cluster n points into k clusters based on the means of shortest distance. (cautsion: do not confused it with K-nearest clustering). We use the demo data sets “USArrests”.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="k-means.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;USArrests&quot;</span>)</span>
+<span id="cb17-2"><a href="k-means.html#cb17-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> USArrests</span>
+<span id="cb17-3"><a href="k-means.html#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div>
+<pre><code>##            Murder Assault UrbanPop Rape
+## Alabama      13.2     236       58 21.2
+## Alaska       10.0     263       48 44.5
+## Arizona       8.1     294       80 31.0
+## Arkansas      8.8     190       50 19.5
+## California    9.0     276       91 40.6
+## Colorado      7.9     204       78 38.7</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="k-means.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scaling the data</span></span>
+<span id="cb19-2"><a href="k-means.html#cb19-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">scale</span>(df)</span>
+<span id="cb19-3"><a href="k-means.html#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div>
+<pre><code>##                Murder   Assault
+## Alabama    1.24256408 0.7828393
+## Alaska     0.50786248 1.1068225
+## Arizona    0.07163341 1.4788032
+## Arkansas   0.23234938 0.2308680
+## California 0.27826823 1.2628144
+## Colorado   0.02571456 0.3988593
+##              UrbanPop         Rape
+## Alabama    -0.5209066 -0.003416473
+## Alaska     -1.2117642  2.484202941
+## Arizona     0.9989801  1.042878388
+## Arkansas   -1.0735927 -0.184916602
+## California  1.7589234  2.067820292
+## Colorado    0.8608085  1.864967207</code></pre>
+<p>We use <strong>factoextra</strong> package to create beautiful clusters visualization</p>
+<p>We also use <code>fviz_nbclust</code> to determine the optimal number of clusters</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="k-means.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb21-2"><a href="k-means.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(df, kmeans, <span class="at">method=</span><span class="st">&quot;wss&quot;</span>) <span class="sc">+</span> <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">4</span>, <span class="at">linetype =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="R-Algorithm-Notes_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="k-means.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb22-2"><a href="k-means.html#cb22-2" aria-hidden="true" tabindex="-1"></a>(km.res <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(df, <span class="at">centers =</span> <span class="dv">4</span>, <span class="at">nstart =</span> <span class="dv">25</span>))</span></code></pre></div>
+<pre><code>## K-means clustering with 4 clusters of sizes 8, 13, 16, 13
 ## 
 ## Cluster means:
-##             x           y
-## 1  1.04594250  0.99192584
-## 2 -0.07895856 -0.03821564
+##       Murder    Assault   UrbanPop
+## 1  1.4118898  0.8743346 -0.8145211
+## 2 -0.9615407 -1.1066010 -0.9301069
+## 3 -0.4894375 -0.3826001  0.5758298
+## 4  0.6950701  1.0394414  0.7226370
+##          Rape
+## 1  0.01927104
+## 2 -0.96676331
+## 3 -0.26165379
+## 4  1.27693964
 ## 
 ## Clustering vector:
-##   [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-##  [23] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
-##  [45] 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-##  [67] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-##  [89] 1 1 1 1 1 1 1 1 1 1 1 1
+##        Alabama         Alaska 
+##              1              4 
+##        Arizona       Arkansas 
+##              4              1 
+##     California       Colorado 
+##              4              4 
+##    Connecticut       Delaware 
+##              3              3 
+##        Florida        Georgia 
+##              4              1 
+##         Hawaii          Idaho 
+##              3              2 
+##       Illinois        Indiana 
+##              4              3 
+##           Iowa         Kansas 
+##              2              3 
+##       Kentucky      Louisiana 
+##              2              1 
+##          Maine       Maryland 
+##              2              4 
+##  Massachusetts       Michigan 
+##              3              4 
+##      Minnesota    Mississippi 
+##              2              1 
+##       Missouri        Montana 
+##              4              2 
+##       Nebraska         Nevada 
+##              2              4 
+##  New Hampshire     New Jersey 
+##              2              3 
+##     New Mexico       New York 
+##              4              4 
+## North Carolina   North Dakota 
+##              1              2 
+##           Ohio       Oklahoma 
+##              3              3 
+##         Oregon   Pennsylvania 
+##              3              3 
+##   Rhode Island South Carolina 
+##              3              1 
+##   South Dakota      Tennessee 
+##              2              1 
+##          Texas           Utah 
+##              4              3 
+##        Vermont       Virginia 
+##              2              3 
+##     Washington  West Virginia 
+##              3              2 
+##      Wisconsin        Wyoming 
+##              2              3 
 ## 
 ## Within cluster sum of squares by cluster:
-## [1] 9.304458 7.498585
-##  (between_SS / total_SS =  77.6 %)
+## [1]  8.316061 11.952463 16.212213
+## [4] 19.922437
+##  (between_SS / total_SS =  71.2 %)
 ## 
 ## Available components:
 ## 
-## [1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;       
-## [4] &quot;withinss&quot;     &quot;tot.withinss&quot; &quot;betweenss&quot;   
-## [7] &quot;size&quot;         &quot;iter&quot;         &quot;ifault&quot;</code></pre>
+## [1] &quot;cluster&quot;      &quot;centers&quot;     
+## [3] &quot;totss&quot;        &quot;withinss&quot;    
+## [5] &quot;tot.withinss&quot; &quot;betweenss&quot;   
+## [7] &quot;size&quot;         &quot;iter&quot;        
+## [9] &quot;ifault&quot;</code></pre>
 <p>There are 7 Avaliable components you can access it.<br />
-Plot the clustering result</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="k-means.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="at">col=</span>cl<span class="sc">$</span>cluster)</span>
-<span id="cb19-2"><a href="k-means.html#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#points(cl$centers, col = 1:2, pch = 8, cex=2)</span></span>
-<span id="cb19-3"><a href="k-means.html#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(cl<span class="sc">$</span>centers, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;blue&quot;</span>, <span class="st">&quot;green&quot;</span>), <span class="at">pch=</span><span class="dv">8</span>, <span class="at">cex=</span><span class="dv">2</span>)</span></code></pre></div>
-<p><img src="R-Algorithm-Notes_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+Compute the mean of each variables by clustering using the original data:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="k-means.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aggregate</span>(USArrests, <span class="at">by=</span><span class="fu">list</span>(<span class="at">cluster=</span>km.res<span class="sc">$</span>cluster), mean)</span></code></pre></div>
+<pre><code>##   cluster   Murder   Assault UrbanPop
+## 1       1 13.93750 243.62500 53.75000
+## 2       2  3.60000  78.53846 52.07692
+## 3       3  5.65625 138.87500 73.87500
+## 4       4 10.81538 257.38462 76.00000
+##       Rape
+## 1 21.41250
+## 2 12.17692
+## 3 18.78125
+## 4 33.19231</code></pre>
+<p>Display results with your cluster result:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="k-means.html#cb26-1" aria-hidden="true" tabindex="-1"></a>dd <span class="ot">&lt;-</span> <span class="fu">cbind</span>(USArrests, <span class="at">cluster =</span> km.res<span class="sc">$</span>cluster)</span>
+<span id="cb26-2"><a href="k-means.html#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dd)</span></code></pre></div>
+<pre><code>##            Murder Assault UrbanPop Rape
+## Alabama      13.2     236       58 21.2
+## Alaska       10.0     263       48 44.5
+## Arizona       8.1     294       80 31.0
+## Arkansas      8.8     190       50 19.5
+## California    9.0     276       91 40.6
+## Colorado      7.9     204       78 38.7
+##            cluster
+## Alabama          1
+## Alaska           4
+## Arizona          4
+## Arkansas         1
+## California       4
+## Colorado         4</code></pre>
+<p>Plot the clustering result using factoextra package</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="k-means.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb28-2"><a href="k-means.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(km.res, df, <span class="at">palette=</span><span class="st">&quot;Set2&quot;</span>, <span class="at">ggtheme =</span> <span class="fu">theme_minimal</span>())</span></code></pre></div>
+<p><img src="R-Algorithm-Notes_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="k-means.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#points(km.res$centers, col = 1:2, pch = 8, cex=2)</span></span></code></pre></div>
+<p>Reference: <a href="https://www.datanovia.com/en/lessons/k-means-clustering-in-r-algorith-and-practical-examples/">here</a></p>
 
 </div>
             </section>

@@ -1,22 +1,47 @@
 # K-means
 `r Sys.Date()` updated  
 
-K-means clustering: It is a method to cluster n points into k clusters based on the means of shortest distance. (cautsion: do not confused it with K-nearest clustering)
+K-means clustering: It is a method to cluster n points into k clusters based on the means of shortest distance. (cautsion: do not confused it with K-nearest clustering). We use the demo data sets "USArrests".
+
+```{r, warning=FALSE}
+data("USArrests")
+df <- USArrests
+head(df)
+```
+```{r}
+# scaling the data
+df <- scale(df)
+head(df)
+```
+We use **factoextra** package to create beautiful clusters visualization
+
+We also use `fviz_nbclust` to determine the optimal number of clusters
+```{r}
+set.seed(123)
+fviz_nbclust(df, kmeans, method="wss") + geom_vline(xintercept = 4, linetype = 2)
+```
 
 ```{r}
-# use kmeans from stats package
-x <- rbind(matrix(rnorm(100, sd = 0.3), ncol = 2),
-           matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2))
-colnames(x) <- c("x", "y")
-(cl <- kmeans(x, 2))
+set.seed(123)
+(km.res <- kmeans(df, centers = 4, nstart = 25))
 ```
 
 There are 7 Avaliable components you can access it.    
-Plot the clustering result
+Compute the mean of each variables by clustering using the original data:
 ```{r}
-plot(x, col=cl$cluster)
-#points(cl$centers, col = 1:2, pch = 8, cex=2)
-points(cl$centers, col = c("blue", "green"), pch=8, cex=2)
+aggregate(USArrests, by=list(cluster=km.res$cluster), mean)
+```
+Display results with your cluster result:
+```{r}
+dd <- cbind(USArrests, cluster = km.res$cluster)
+head(dd)
+```
+Plot the clustering result using factoextra package
+```{r, message=FALSE}
+library(factoextra)
+fviz_cluster(km.res, df, palette="Set2", ggtheme = theme_minimal())
+#points(km.res$centers, col = 1:2, pch = 8, cex=2)
 ```
 
+Reference: [here](https://www.datanovia.com/en/lessons/k-means-clustering-in-r-algorith-and-practical-examples/)
 

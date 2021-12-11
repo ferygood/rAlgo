@@ -232,12 +232,12 @@ Send these message to a population and see which one get more clicks or sell mor
 <p><a href="https://www.geeksforgeeks.org/ab-testing-with-r-programming/">ref</a></p>
 <p>In short, we want to test two variant design on a hotel booking website. Based on result, make recommendation to your stakeholders.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="ab-test.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
-<pre><code>## ── Attaching packages ───────── tidyverse 1.3.1 ──</code></pre>
-<pre><code>## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
-## ✓ tibble  3.1.5     ✓ dplyr   1.0.7
+<pre><code>## ── Attaching packages ──────────────────</code></pre>
+<pre><code>## ✓ tibble  3.1.5     ✓ dplyr   1.0.7
 ## ✓ tidyr   1.1.4     ✓ stringr 1.4.0
-## ✓ readr   2.0.2     ✓ forcats 0.5.1</code></pre>
-<pre><code>## ── Conflicts ──────────── tidyverse_conflicts() ──
+## ✓ readr   2.0.2     ✓ forcats 0.5.1
+## ✓ purrr   0.3.4</code></pre>
+<pre><code>## ── Conflicts ── tidyverse_conflicts() ──
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="ab-test.html#cb5-1" aria-hidden="true" tabindex="-1"></a>urlfile <span class="ot">&lt;-</span> <span class="st">&quot;https://raw.githubusercontent.com/etomaa/A-B-Testing/master/data/Website%20Results.csv&quot;</span></span>
@@ -245,10 +245,10 @@ Send these message to a population and see which one get more clicks or sell mor
 <span id="cb5-3"><a href="ab-test.html#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df)</span></code></pre></div>
 <pre><code>## Rows: 1,451
 ## Columns: 4
-## $ variant        &lt;chr&gt; &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, …
-## $ converted      &lt;lgl&gt; FALSE, FALSE, FALSE, FALS…
-## $ length_of_stay &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0…
-## $ revenue        &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0…</code></pre>
+## $ variant        &lt;chr&gt; &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, …
+## $ converted      &lt;lgl&gt; FALSE, FALSE, F…
+## $ length_of_stay &lt;dbl&gt; 0, 0, 0, 0, 0, …
+## $ revenue        &lt;dbl&gt; 0.0, 0.0, 0.0, …</code></pre>
 <p><em>variant A</em>: current website (control group)<br />
 <em>variant B</em>: experimental group (to see if new feature increase the conversion)<br />
 <em>converted</em>: if <strong>TRUE</strong>, it means that the customer completes bookings and it’s going to show <strong>FALSE</strong> when the customer visits the sites but not makes a booking.</p>
@@ -350,16 +350,26 @@ Send these message to a population and see which one get more clicks or sell mor
 <span id="cb15-21"><a href="ab-test.html#cb15-21" aria-hidden="true" tabindex="-1"></a>    ci[<span class="dv">2</span>]</span>
 <span id="cb15-22"><a href="ab-test.html#cb15-22" aria-hidden="true" tabindex="-1"></a>  ))</span>
 <span id="cb15-23"><a href="ab-test.html#cb15-23" aria-hidden="true" tabindex="-1"></a>vis_result_pool</span></code></pre></div>
-<pre><code>##                         metric        value
-## 1         Estimated Difference  0.022945680
-## 2           Relative Uplift(%) 82.719178082
-## 3     pooled sample proportion  0.039283253
-## 4 Standard Error of Difference  0.010200138
-## 5                      z_score  2.249546089
-## 6                      p-value  0.024477774
-## 7              Margin of Error  0.019991903
-## 8                     CI-lower  0.002953777
-## 9                     CI-upper  0.042937584</code></pre>
+<pre><code>##                         metric
+## 1         Estimated Difference
+## 2           Relative Uplift(%)
+## 3     pooled sample proportion
+## 4 Standard Error of Difference
+## 5                      z_score
+## 6                      p-value
+## 7              Margin of Error
+## 8                     CI-lower
+## 9                     CI-upper
+##          value
+## 1  0.022945680
+## 2 82.719178082
+## 3  0.039283253
+## 4  0.010200138
+## 5  2.249546089
+## 6  0.024477774
+## 7  0.019991903
+## 8  0.002953777
+## 9  0.042937584</code></pre>
 <blockquote>
 <p><strong>Recommendation and Conclusion</strong><br />
 * Variant A has 20 conversions and 721 hits whereas Variant B has 37 conversions and 730 hits.<br />
