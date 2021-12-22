@@ -30,7 +30,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Yao-Chung" />
 
 
-<meta name="date" content="2021-12-11" />
+<meta name="date" content="2021-12-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -172,7 +172,11 @@ div.csl-indent {
 <li class="chapter" data-level="2.2" data-path="ab-test.html"><a href="ab-test.html#case-study"><i class="fa fa-check"></i><b>2.2</b> Case study</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>3</b> K-means</a></li>
-<li class="chapter" data-level="4" data-path="parts.html"><a href="parts.html"><i class="fa fa-check"></i><b>4</b> Parts</a></li>
+<li class="chapter" data-level="4" data-path="knn-k-nearest-neighbors.html"><a href="knn-k-nearest-neighbors.html"><i class="fa fa-check"></i><b>4</b> kNN (k-Nearest Neighbors)</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="knn-k-nearest-neighbors.html"><a href="knn-k-nearest-neighbors.html#difference-calculating-the-distance-1-euclidean-2-manhatten-3-cosine-4-jaccard-coefficient-5-minkowski"><i class="fa fa-check"></i><b>4.1</b> Difference calculating the distance: (1) Euclidean (2) Manhatten (3) Cosine (4) Jaccard Coefficient (5) MinKowski</a></li>
+<li class="chapter" data-level="4.2" data-path="knn-k-nearest-neighbors.html"><a href="knn-k-nearest-neighbors.html#find-the-k-nearest-neighbors"><i class="fa fa-check"></i><b>4.2</b> Find the k nearest neighbors</a></li>
+</ul></li>
 <li class="chapter" data-level="5" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html"><i class="fa fa-check"></i><b>5</b> Footnotes and citations</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="footnotes-and-citations.html"><a href="footnotes-and-citations.html#footnotes"><i class="fa fa-check"></i><b>5.1</b> Footnotes</a></li>
@@ -218,7 +222,7 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="ab-test" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> A/B test</h1>
-<p>2021-12-11 updated</p>
+<p>2021-12-22 updated</p>
 <p>A/B test is used for testing which version of product can give you a preferable outcome by setting two versions of a product/test with <strong>only one</strong> variable is different (which is version A and version B). A is usually the “current version” and B is often the “improved version”.</p>
 <div id="scenario" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Scenario</h2>
@@ -231,145 +235,127 @@ Send these message to a population and see which one get more clicks or sell mor
 <h2><span class="header-section-number">2.2</span> Case study</h2>
 <p><a href="https://www.geeksforgeeks.org/ab-testing-with-r-programming/">ref</a></p>
 <p>In short, we want to test two variant design on a hotel booking website. Based on result, make recommendation to your stakeholders.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="ab-test.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
-<pre><code>## ── Attaching packages ──────────────────</code></pre>
-<pre><code>## ✓ tibble  3.1.5     ✓ dplyr   1.0.7
-## ✓ tidyr   1.1.4     ✓ stringr 1.4.0
-## ✓ readr   2.0.2     ✓ forcats 0.5.1
-## ✓ purrr   0.3.4</code></pre>
-<pre><code>## ── Conflicts ── tidyverse_conflicts() ──
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="ab-test.html#cb5-1" aria-hidden="true" tabindex="-1"></a>urlfile <span class="ot">&lt;-</span> <span class="st">&quot;https://raw.githubusercontent.com/etomaa/A-B-Testing/master/data/Website%20Results.csv&quot;</span></span>
-<span id="cb5-2"><a href="ab-test.html#cb5-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">url</span>(urlfile), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb5-3"><a href="ab-test.html#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="ab-test.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="ab-test.html#cb1-2" aria-hidden="true" tabindex="-1"></a>urlfile <span class="ot">&lt;-</span> <span class="st">&quot;https://raw.githubusercontent.com/etomaa/A-B-Testing/master/data/Website%20Results.csv&quot;</span></span>
+<span id="cb1-3"><a href="ab-test.html#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">url</span>(urlfile), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-4"><a href="ab-test.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df)</span></code></pre></div>
 <pre><code>## Rows: 1,451
 ## Columns: 4
-## $ variant        &lt;chr&gt; &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, …
-## $ converted      &lt;lgl&gt; FALSE, FALSE, F…
-## $ length_of_stay &lt;dbl&gt; 0, 0, 0, 0, 0, …
-## $ revenue        &lt;dbl&gt; 0.0, 0.0, 0.0, …</code></pre>
+## $ variant        &lt;chr&gt; &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;,…
+## $ converted      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, F…
+## $ length_of_stay &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ revenue        &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.00,…</code></pre>
 <p><em>variant A</em>: current website (control group)<br />
 <em>variant B</em>: experimental group (to see if new feature increase the conversion)<br />
 <em>converted</em>: if <strong>TRUE</strong>, it means that the customer completes bookings and it’s going to show <strong>FALSE</strong> when the customer visits the sites but not makes a booking.</p>
 <p>Test Hypothesis:<br />
 - Null hypothesis: Pcont_A = Pcont_B<br />
 - Alternative hypothesis: Pcont_A != Pcont_B</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="ab-test.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># conversion rate A</span></span>
-<span id="cb7-2"><a href="ab-test.html#cb7-2" aria-hidden="true" tabindex="-1"></a>conversion_subset_A <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb7-3"><a href="ab-test.html#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(variant <span class="sc">==</span> <span class="st">&quot;A&quot;</span> <span class="sc">&amp;</span> converted <span class="sc">==</span> <span class="st">&quot;TRUE&quot;</span>)</span>
-<span id="cb7-4"><a href="ab-test.html#cb7-4" aria-hidden="true" tabindex="-1"></a>conversions_A <span class="ot">&lt;-</span> <span class="fu">nrow</span>(conversion_subset_A)</span>
-<span id="cb7-5"><a href="ab-test.html#cb7-5" aria-hidden="true" tabindex="-1"></a>visitors_A <span class="ot">&lt;-</span> <span class="fu">nrow</span>(df <span class="sc">%&gt;%</span></span>
-<span id="cb7-6"><a href="ab-test.html#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(variant <span class="sc">==</span> <span class="st">&quot;A&quot;</span>))</span>
-<span id="cb7-7"><a href="ab-test.html#cb7-7" aria-hidden="true" tabindex="-1"></a>conv_rate_A <span class="ot">&lt;-</span> (conversions_A<span class="sc">/</span>visitors_A)</span>
-<span id="cb7-8"><a href="ab-test.html#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="ab-test.html#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># conversion rate B</span></span>
-<span id="cb7-10"><a href="ab-test.html#cb7-10" aria-hidden="true" tabindex="-1"></a>conversion_subset_B <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb7-11"><a href="ab-test.html#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(variant <span class="sc">==</span> <span class="st">&quot;B&quot;</span> <span class="sc">&amp;</span> converted <span class="sc">==</span> <span class="st">&quot;TRUE&quot;</span>)</span>
-<span id="cb7-12"><a href="ab-test.html#cb7-12" aria-hidden="true" tabindex="-1"></a>conversions_B <span class="ot">&lt;-</span> <span class="fu">nrow</span>(conversion_subset_B)</span>
-<span id="cb7-13"><a href="ab-test.html#cb7-13" aria-hidden="true" tabindex="-1"></a>visitors_B <span class="ot">&lt;-</span> <span class="fu">nrow</span>(df <span class="sc">%&gt;%</span></span>
-<span id="cb7-14"><a href="ab-test.html#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(variant <span class="sc">==</span> <span class="st">&quot;B&quot;</span>))</span>
-<span id="cb7-15"><a href="ab-test.html#cb7-15" aria-hidden="true" tabindex="-1"></a>conv_rate_B <span class="ot">&lt;-</span> (conversions_B<span class="sc">/</span>visitors_B)</span>
-<span id="cb7-16"><a href="ab-test.html#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="ab-test.html#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">&quot;conversion rates of A and B are &quot;</span>, <span class="fu">round</span>(conv_rate_A, <span class="dv">4</span>), <span class="st">&quot; and &quot;</span>, <span class="fu">round</span>(conv_rate_B, <span class="dv">4</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="ab-test.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># conversion rate A</span></span>
+<span id="cb3-2"><a href="ab-test.html#cb3-2" aria-hidden="true" tabindex="-1"></a>conversion_subset_A <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="ab-test.html#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(variant <span class="sc">==</span> <span class="st">&quot;A&quot;</span> <span class="sc">&amp;</span> converted <span class="sc">==</span> <span class="st">&quot;TRUE&quot;</span>)</span>
+<span id="cb3-4"><a href="ab-test.html#cb3-4" aria-hidden="true" tabindex="-1"></a>conversions_A <span class="ot">&lt;-</span> <span class="fu">nrow</span>(conversion_subset_A)</span>
+<span id="cb3-5"><a href="ab-test.html#cb3-5" aria-hidden="true" tabindex="-1"></a>visitors_A <span class="ot">&lt;-</span> <span class="fu">nrow</span>(df <span class="sc">%&gt;%</span></span>
+<span id="cb3-6"><a href="ab-test.html#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(variant <span class="sc">==</span> <span class="st">&quot;A&quot;</span>))</span>
+<span id="cb3-7"><a href="ab-test.html#cb3-7" aria-hidden="true" tabindex="-1"></a>conv_rate_A <span class="ot">&lt;-</span> (conversions_A<span class="sc">/</span>visitors_A)</span>
+<span id="cb3-8"><a href="ab-test.html#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="ab-test.html#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># conversion rate B</span></span>
+<span id="cb3-10"><a href="ab-test.html#cb3-10" aria-hidden="true" tabindex="-1"></a>conversion_subset_B <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb3-11"><a href="ab-test.html#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(variant <span class="sc">==</span> <span class="st">&quot;B&quot;</span> <span class="sc">&amp;</span> converted <span class="sc">==</span> <span class="st">&quot;TRUE&quot;</span>)</span>
+<span id="cb3-12"><a href="ab-test.html#cb3-12" aria-hidden="true" tabindex="-1"></a>conversions_B <span class="ot">&lt;-</span> <span class="fu">nrow</span>(conversion_subset_B)</span>
+<span id="cb3-13"><a href="ab-test.html#cb3-13" aria-hidden="true" tabindex="-1"></a>visitors_B <span class="ot">&lt;-</span> <span class="fu">nrow</span>(df <span class="sc">%&gt;%</span></span>
+<span id="cb3-14"><a href="ab-test.html#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(variant <span class="sc">==</span> <span class="st">&quot;B&quot;</span>))</span>
+<span id="cb3-15"><a href="ab-test.html#cb3-15" aria-hidden="true" tabindex="-1"></a>conv_rate_B <span class="ot">&lt;-</span> (conversions_B<span class="sc">/</span>visitors_B)</span>
+<span id="cb3-16"><a href="ab-test.html#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="ab-test.html#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">&quot;conversion rates of A and B are &quot;</span>, <span class="fu">round</span>(conv_rate_A, <span class="dv">4</span>), <span class="st">&quot; and &quot;</span>, <span class="fu">round</span>(conv_rate_B, <span class="dv">4</span>)))</span></code></pre></div>
 <pre><code>## [1] &quot;conversion rates of A and B are 0.0277 and 0.0507&quot;</code></pre>
 <p>Then we compute the relative uplift using the conversion rates A &amp; B.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="ab-test.html#cb9-1" aria-hidden="true" tabindex="-1"></a>uplift <span class="ot">&lt;-</span> (conv_rate_B <span class="sc">-</span> conv_rate_A) <span class="sc">/</span> conv_rate_A <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb9-2"><a href="ab-test.html#cb9-2" aria-hidden="true" tabindex="-1"></a>uplift</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="ab-test.html#cb5-1" aria-hidden="true" tabindex="-1"></a>uplift <span class="ot">&lt;-</span> (conv_rate_B <span class="sc">-</span> conv_rate_A) <span class="sc">/</span> conv_rate_A <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb5-2"><a href="ab-test.html#cb5-2" aria-hidden="true" tabindex="-1"></a>uplift</span></code></pre></div>
 <pre><code>## [1] 82.71918</code></pre>
 <p>B is better 83% than A. This is high enough to decide a winner. However, we need to use statistical methods to give a more precise result.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="ab-test.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pooled sample proportion for variants A &amp; B</span></span>
-<span id="cb11-2"><a href="ab-test.html#cb11-2" aria-hidden="true" tabindex="-1"></a>p_pool <span class="ot">&lt;-</span> (conversions_A <span class="sc">+</span> conversions_B) <span class="sc">/</span> (visitors_A <span class="sc">+</span></span>
-<span id="cb11-3"><a href="ab-test.html#cb11-3" aria-hidden="true" tabindex="-1"></a>                                             visitors_B)</span>
-<span id="cb11-4"><a href="ab-test.html#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s compute Standard error for variants A &amp; B (SE_pool)</span></span>
-<span id="cb11-5"><a href="ab-test.html#cb11-5" aria-hidden="true" tabindex="-1"></a>SE_pool <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_pool <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_pool) <span class="sc">*</span> ((<span class="dv">1</span> <span class="sc">/</span> visitors_A) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> visitors_B)))</span>
-<span id="cb11-6"><a href="ab-test.html#cb11-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-7"><a href="ab-test.html#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s compute the margin of error for the pool</span></span>
-<span id="cb11-8"><a href="ab-test.html#cb11-8" aria-hidden="true" tabindex="-1"></a>MOE <span class="ot">&lt;-</span> SE_pool <span class="sc">*</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
-<span id="cb11-9"><a href="ab-test.html#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="ab-test.html#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Point Estimate or Difference in proportion</span></span>
-<span id="cb11-11"><a href="ab-test.html#cb11-11" aria-hidden="true" tabindex="-1"></a>d_hat <span class="ot">&lt;-</span> conv_rate_B <span class="sc">-</span> conv_rate_A</span>
-<span id="cb11-12"><a href="ab-test.html#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-13"><a href="ab-test.html#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># compute the Z-score so we can determine the p-value</span></span>
-<span id="cb11-14"><a href="ab-test.html#cb11-14" aria-hidden="true" tabindex="-1"></a>z_score <span class="ot">&lt;-</span> d_hat <span class="sc">/</span> SE_pool</span>
-<span id="cb11-15"><a href="ab-test.html#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-16"><a href="ab-test.html#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;The pooled probabilty is &quot;</span>, <span class="fu">round</span>(p_pool, <span class="dv">4</span>), <span class="st">&quot;.</span><span class="sc">\n</span><span class="st">Standard error is &quot;</span>, </span>
-<span id="cb11-17"><a href="ab-test.html#cb11-17" aria-hidden="true" tabindex="-1"></a>       <span class="fu">round</span>(SE_pool, <span class="dv">4</span>), <span class="st">&quot;.</span><span class="sc">\n</span><span class="st">Margin of error is &quot;</span>, <span class="fu">round</span>(MOE, <span class="dv">4</span>), </span>
-<span id="cb11-18"><a href="ab-test.html#cb11-18" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;.</span><span class="sc">\n</span><span class="st">Difference in proportion of variants A &amp; B is &quot;</span>, <span class="fu">round</span>(d_hat,<span class="dv">4</span>), </span>
-<span id="cb11-19"><a href="ab-test.html#cb11-19" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;.</span><span class="sc">\n</span><span class="st">Z score is &quot;</span>, <span class="fu">round</span>(z_score, <span class="dv">4</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="ab-test.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pooled sample proportion for variants A &amp; B</span></span>
+<span id="cb7-2"><a href="ab-test.html#cb7-2" aria-hidden="true" tabindex="-1"></a>p_pool <span class="ot">&lt;-</span> (conversions_A <span class="sc">+</span> conversions_B) <span class="sc">/</span> (visitors_A <span class="sc">+</span></span>
+<span id="cb7-3"><a href="ab-test.html#cb7-3" aria-hidden="true" tabindex="-1"></a>                                             visitors_B)</span>
+<span id="cb7-4"><a href="ab-test.html#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s compute Standard error for variants A &amp; B (SE_pool)</span></span>
+<span id="cb7-5"><a href="ab-test.html#cb7-5" aria-hidden="true" tabindex="-1"></a>SE_pool <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p_pool <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p_pool) <span class="sc">*</span> ((<span class="dv">1</span> <span class="sc">/</span> visitors_A) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">/</span> visitors_B)))</span>
+<span id="cb7-6"><a href="ab-test.html#cb7-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-7"><a href="ab-test.html#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s compute the margin of error for the pool</span></span>
+<span id="cb7-8"><a href="ab-test.html#cb7-8" aria-hidden="true" tabindex="-1"></a>MOE <span class="ot">&lt;-</span> SE_pool <span class="sc">*</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span>
+<span id="cb7-9"><a href="ab-test.html#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="ab-test.html#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Point Estimate or Difference in proportion</span></span>
+<span id="cb7-11"><a href="ab-test.html#cb7-11" aria-hidden="true" tabindex="-1"></a>d_hat <span class="ot">&lt;-</span> conv_rate_B <span class="sc">-</span> conv_rate_A</span>
+<span id="cb7-12"><a href="ab-test.html#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="ab-test.html#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># compute the Z-score so we can determine the p-value</span></span>
+<span id="cb7-14"><a href="ab-test.html#cb7-14" aria-hidden="true" tabindex="-1"></a>z_score <span class="ot">&lt;-</span> d_hat <span class="sc">/</span> SE_pool</span>
+<span id="cb7-15"><a href="ab-test.html#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="ab-test.html#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;The pooled probabilty is &quot;</span>, <span class="fu">round</span>(p_pool, <span class="dv">4</span>), <span class="st">&quot;.</span><span class="sc">\n</span><span class="st">Standard error is &quot;</span>, </span>
+<span id="cb7-17"><a href="ab-test.html#cb7-17" aria-hidden="true" tabindex="-1"></a>       <span class="fu">round</span>(SE_pool, <span class="dv">4</span>), <span class="st">&quot;.</span><span class="sc">\n</span><span class="st">Margin of error is &quot;</span>, <span class="fu">round</span>(MOE, <span class="dv">4</span>), </span>
+<span id="cb7-18"><a href="ab-test.html#cb7-18" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;.</span><span class="sc">\n</span><span class="st">Difference in proportion of variants A &amp; B is &quot;</span>, <span class="fu">round</span>(d_hat,<span class="dv">4</span>), </span>
+<span id="cb7-19"><a href="ab-test.html#cb7-19" aria-hidden="true" tabindex="-1"></a>       <span class="st">&quot;.</span><span class="sc">\n</span><span class="st">Z score is &quot;</span>, <span class="fu">round</span>(z_score, <span class="dv">4</span>)))</span></code></pre></div>
 <pre><code>## The pooled probabilty is 0.0393.
 ## Standard error is 0.0102.
 ## Margin of error is 0.02.
 ## Difference in proportion of variants A &amp; B is 0.0229.
 ## Z score is 2.2495</code></pre>
 <p>Using Z-score, we can quickly determine the p-value via a look-up table, or using code below. Also conpute the confidence interval for the pool</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="ab-test.html#cb13-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(<span class="at">q =</span> <span class="sc">-</span>z_score, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">2</span></span>
-<span id="cb13-2"><a href="ab-test.html#cb13-2" aria-hidden="true" tabindex="-1"></a>ci <span class="ot">&lt;-</span> <span class="fu">c</span>(d_hat <span class="sc">-</span> MOE, d_hat <span class="sc">+</span> MOE)</span>
-<span id="cb13-3"><a href="ab-test.html#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="ab-test.html#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># confidence interval of variant A</span></span>
-<span id="cb13-5"><a href="ab-test.html#cb13-5" aria-hidden="true" tabindex="-1"></a>X_hat_A <span class="ot">&lt;-</span> conversions_A <span class="sc">/</span> visitors_A</span>
-<span id="cb13-6"><a href="ab-test.html#cb13-6" aria-hidden="true" tabindex="-1"></a>se_hat_A <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(X_hat_A <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> X_hat_A) <span class="sc">/</span> visitors_A) </span>
-<span id="cb13-7"><a href="ab-test.html#cb13-7" aria-hidden="true" tabindex="-1"></a>ci_A <span class="ot">&lt;-</span> <span class="fu">c</span>(X_hat_A <span class="sc">-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">*</span> se_hat_A, X_hat_A</span>
-<span id="cb13-8"><a href="ab-test.html#cb13-8" aria-hidden="true" tabindex="-1"></a>          <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">*</span> se_hat_A) </span>
-<span id="cb13-9"><a href="ab-test.html#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href="ab-test.html#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># confidence interval of variant B</span></span>
-<span id="cb13-11"><a href="ab-test.html#cb13-11" aria-hidden="true" tabindex="-1"></a>X_hat_B <span class="ot">&lt;-</span> conversions_B <span class="sc">/</span> visitors_B</span>
-<span id="cb13-12"><a href="ab-test.html#cb13-12" aria-hidden="true" tabindex="-1"></a>se_hat_B <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(X_hat_B <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> X_hat_B) <span class="sc">/</span> visitors_B) </span>
-<span id="cb13-13"><a href="ab-test.html#cb13-13" aria-hidden="true" tabindex="-1"></a>ci_B <span class="ot">&lt;-</span> <span class="fu">c</span>(X_hat_B <span class="sc">-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">*</span> se_hat_B, </span>
-<span id="cb13-14"><a href="ab-test.html#cb13-14" aria-hidden="true" tabindex="-1"></a>          X_hat_B <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">*</span> se_hat_B)</span>
-<span id="cb13-15"><a href="ab-test.html#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="ab-test.html#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;p value is &quot;</span>, <span class="fu">round</span>(p_value, <span class="dv">4</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">Confidence interval is &quot;</span>, </span>
-<span id="cb13-17"><a href="ab-test.html#cb13-17" aria-hidden="true" tabindex="-1"></a>           <span class="fu">list</span>(<span class="fu">round</span>(ci, <span class="dv">4</span>)), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">Confidence interval of A is &quot;</span>, </span>
-<span id="cb13-18"><a href="ab-test.html#cb13-18" aria-hidden="true" tabindex="-1"></a>           <span class="fu">list</span>(<span class="fu">round</span>(ci_A, <span class="dv">4</span>)),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Confidence interval of B is &quot;</span>, </span>
-<span id="cb13-19"><a href="ab-test.html#cb13-19" aria-hidden="true" tabindex="-1"></a>           <span class="fu">list</span>(<span class="fu">round</span>(ci_B, <span class="dv">4</span>))))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="ab-test.html#cb9-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(<span class="at">q =</span> <span class="sc">-</span>z_score, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb9-2"><a href="ab-test.html#cb9-2" aria-hidden="true" tabindex="-1"></a>ci <span class="ot">&lt;-</span> <span class="fu">c</span>(d_hat <span class="sc">-</span> MOE, d_hat <span class="sc">+</span> MOE)</span>
+<span id="cb9-3"><a href="ab-test.html#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="ab-test.html#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># confidence interval of variant A</span></span>
+<span id="cb9-5"><a href="ab-test.html#cb9-5" aria-hidden="true" tabindex="-1"></a>X_hat_A <span class="ot">&lt;-</span> conversions_A <span class="sc">/</span> visitors_A</span>
+<span id="cb9-6"><a href="ab-test.html#cb9-6" aria-hidden="true" tabindex="-1"></a>se_hat_A <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(X_hat_A <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> X_hat_A) <span class="sc">/</span> visitors_A) </span>
+<span id="cb9-7"><a href="ab-test.html#cb9-7" aria-hidden="true" tabindex="-1"></a>ci_A <span class="ot">&lt;-</span> <span class="fu">c</span>(X_hat_A <span class="sc">-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">*</span> se_hat_A, X_hat_A</span>
+<span id="cb9-8"><a href="ab-test.html#cb9-8" aria-hidden="true" tabindex="-1"></a>          <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">*</span> se_hat_A) </span>
+<span id="cb9-9"><a href="ab-test.html#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="ab-test.html#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># confidence interval of variant B</span></span>
+<span id="cb9-11"><a href="ab-test.html#cb9-11" aria-hidden="true" tabindex="-1"></a>X_hat_B <span class="ot">&lt;-</span> conversions_B <span class="sc">/</span> visitors_B</span>
+<span id="cb9-12"><a href="ab-test.html#cb9-12" aria-hidden="true" tabindex="-1"></a>se_hat_B <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(X_hat_B <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> X_hat_B) <span class="sc">/</span> visitors_B) </span>
+<span id="cb9-13"><a href="ab-test.html#cb9-13" aria-hidden="true" tabindex="-1"></a>ci_B <span class="ot">&lt;-</span> <span class="fu">c</span>(X_hat_B <span class="sc">-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">*</span> se_hat_B, </span>
+<span id="cb9-14"><a href="ab-test.html#cb9-14" aria-hidden="true" tabindex="-1"></a>          X_hat_B <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">*</span> se_hat_B)</span>
+<span id="cb9-15"><a href="ab-test.html#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="ab-test.html#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;p value is &quot;</span>, <span class="fu">round</span>(p_value, <span class="dv">4</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">Confidence interval is &quot;</span>, </span>
+<span id="cb9-17"><a href="ab-test.html#cb9-17" aria-hidden="true" tabindex="-1"></a>           <span class="fu">list</span>(<span class="fu">round</span>(ci, <span class="dv">4</span>)), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">Confidence interval of A is &quot;</span>, </span>
+<span id="cb9-18"><a href="ab-test.html#cb9-18" aria-hidden="true" tabindex="-1"></a>           <span class="fu">list</span>(<span class="fu">round</span>(ci_A, <span class="dv">4</span>)),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Confidence interval of B is &quot;</span>, </span>
+<span id="cb9-19"><a href="ab-test.html#cb9-19" aria-hidden="true" tabindex="-1"></a>           <span class="fu">list</span>(<span class="fu">round</span>(ci_B, <span class="dv">4</span>))))</span></code></pre></div>
 <pre><code>## p value is 0.0245
 ## Confidence interval is c(0.003, 0.0429)
 ## Confidence interval of A is c(0.0158, 0.0397)
 ## Confidence interval of B is c(0.0348, 0.0666)</code></pre>
 <p>Show the computation result in table:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="ab-test.html#cb15-1" aria-hidden="true" tabindex="-1"></a>vis_result_pool <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb15-2"><a href="ab-test.html#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric =</span> <span class="fu">c</span>(</span>
-<span id="cb15-3"><a href="ab-test.html#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Estimated Difference&#39;</span>,</span>
-<span id="cb15-4"><a href="ab-test.html#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Relative Uplift(%)&#39;</span>,</span>
-<span id="cb15-5"><a href="ab-test.html#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;pooled sample proportion&#39;</span>,</span>
-<span id="cb15-6"><a href="ab-test.html#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Standard Error of Difference&#39;</span>,</span>
-<span id="cb15-7"><a href="ab-test.html#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;z_score&#39;</span>,</span>
-<span id="cb15-8"><a href="ab-test.html#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;p-value&#39;</span>,</span>
-<span id="cb15-9"><a href="ab-test.html#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Margin of Error&#39;</span>,</span>
-<span id="cb15-10"><a href="ab-test.html#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;CI-lower&#39;</span>,</span>
-<span id="cb15-11"><a href="ab-test.html#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;CI-upper&#39;</span>),</span>
-<span id="cb15-12"><a href="ab-test.html#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(</span>
-<span id="cb15-13"><a href="ab-test.html#cb15-13" aria-hidden="true" tabindex="-1"></a>    conv_rate_B <span class="sc">-</span> conv_rate_A,</span>
-<span id="cb15-14"><a href="ab-test.html#cb15-14" aria-hidden="true" tabindex="-1"></a>    uplift,</span>
-<span id="cb15-15"><a href="ab-test.html#cb15-15" aria-hidden="true" tabindex="-1"></a>    p_pool,</span>
-<span id="cb15-16"><a href="ab-test.html#cb15-16" aria-hidden="true" tabindex="-1"></a>    SE_pool,</span>
-<span id="cb15-17"><a href="ab-test.html#cb15-17" aria-hidden="true" tabindex="-1"></a>    z_score,</span>
-<span id="cb15-18"><a href="ab-test.html#cb15-18" aria-hidden="true" tabindex="-1"></a>    p_value,</span>
-<span id="cb15-19"><a href="ab-test.html#cb15-19" aria-hidden="true" tabindex="-1"></a>    MOE,</span>
-<span id="cb15-20"><a href="ab-test.html#cb15-20" aria-hidden="true" tabindex="-1"></a>    ci[<span class="dv">1</span>],</span>
-<span id="cb15-21"><a href="ab-test.html#cb15-21" aria-hidden="true" tabindex="-1"></a>    ci[<span class="dv">2</span>]</span>
-<span id="cb15-22"><a href="ab-test.html#cb15-22" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb15-23"><a href="ab-test.html#cb15-23" aria-hidden="true" tabindex="-1"></a>vis_result_pool</span></code></pre></div>
-<pre><code>##                         metric
-## 1         Estimated Difference
-## 2           Relative Uplift(%)
-## 3     pooled sample proportion
-## 4 Standard Error of Difference
-## 5                      z_score
-## 6                      p-value
-## 7              Margin of Error
-## 8                     CI-lower
-## 9                     CI-upper
-##          value
-## 1  0.022945680
-## 2 82.719178082
-## 3  0.039283253
-## 4  0.010200138
-## 5  2.249546089
-## 6  0.024477774
-## 7  0.019991903
-## 8  0.002953777
-## 9  0.042937584</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="ab-test.html#cb11-1" aria-hidden="true" tabindex="-1"></a>vis_result_pool <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb11-2"><a href="ab-test.html#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric =</span> <span class="fu">c</span>(</span>
+<span id="cb11-3"><a href="ab-test.html#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Estimated Difference&#39;</span>,</span>
+<span id="cb11-4"><a href="ab-test.html#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Relative Uplift(%)&#39;</span>,</span>
+<span id="cb11-5"><a href="ab-test.html#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;pooled sample proportion&#39;</span>,</span>
+<span id="cb11-6"><a href="ab-test.html#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Standard Error of Difference&#39;</span>,</span>
+<span id="cb11-7"><a href="ab-test.html#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;z_score&#39;</span>,</span>
+<span id="cb11-8"><a href="ab-test.html#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;p-value&#39;</span>,</span>
+<span id="cb11-9"><a href="ab-test.html#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Margin of Error&#39;</span>,</span>
+<span id="cb11-10"><a href="ab-test.html#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;CI-lower&#39;</span>,</span>
+<span id="cb11-11"><a href="ab-test.html#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;CI-upper&#39;</span>),</span>
+<span id="cb11-12"><a href="ab-test.html#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(</span>
+<span id="cb11-13"><a href="ab-test.html#cb11-13" aria-hidden="true" tabindex="-1"></a>    conv_rate_B <span class="sc">-</span> conv_rate_A,</span>
+<span id="cb11-14"><a href="ab-test.html#cb11-14" aria-hidden="true" tabindex="-1"></a>    uplift,</span>
+<span id="cb11-15"><a href="ab-test.html#cb11-15" aria-hidden="true" tabindex="-1"></a>    p_pool,</span>
+<span id="cb11-16"><a href="ab-test.html#cb11-16" aria-hidden="true" tabindex="-1"></a>    SE_pool,</span>
+<span id="cb11-17"><a href="ab-test.html#cb11-17" aria-hidden="true" tabindex="-1"></a>    z_score,</span>
+<span id="cb11-18"><a href="ab-test.html#cb11-18" aria-hidden="true" tabindex="-1"></a>    p_value,</span>
+<span id="cb11-19"><a href="ab-test.html#cb11-19" aria-hidden="true" tabindex="-1"></a>    MOE,</span>
+<span id="cb11-20"><a href="ab-test.html#cb11-20" aria-hidden="true" tabindex="-1"></a>    ci[<span class="dv">1</span>],</span>
+<span id="cb11-21"><a href="ab-test.html#cb11-21" aria-hidden="true" tabindex="-1"></a>    ci[<span class="dv">2</span>]</span>
+<span id="cb11-22"><a href="ab-test.html#cb11-22" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb11-23"><a href="ab-test.html#cb11-23" aria-hidden="true" tabindex="-1"></a>vis_result_pool</span></code></pre></div>
+<pre><code>##                         metric        value
+## 1         Estimated Difference  0.022945680
+## 2           Relative Uplift(%) 82.719178082
+## 3     pooled sample proportion  0.039283253
+## 4 Standard Error of Difference  0.010200138
+## 5                      z_score  2.249546089
+## 6                      p-value  0.024477774
+## 7              Margin of Error  0.019991903
+## 8                     CI-lower  0.002953777
+## 9                     CI-upper  0.042937584</code></pre>
 <blockquote>
 <p><strong>Recommendation and Conclusion</strong><br />
 * Variant A has 20 conversions and 721 hits whereas Variant B has 37 conversions and 730 hits.<br />

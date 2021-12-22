@@ -7,7 +7,9 @@ ab-test
 scenario
 case-study
 k-means
-parts
+knn-k-nearest-neighbors
+difference-calculating-the-distance-1-euclidean-2-manhatten-3-cosine-4-jaccard-coefficient-5-minkowski
+find-the-k-nearest-neighbors
 footnotes-and-citations
 footnotes
 citations

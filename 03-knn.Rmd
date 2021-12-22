@@ -1,0 +1,211 @@
+# kNN (k-Nearest Neighbors)
+`r Sys.Date()` updated  
+Ref: [distance](https://anderfernandez.com/en/blog/code-knn-in-r/)  
+Ref: [tutorial](https://koalatea.io/r-knn-regression/)  
+
+## Difference calculating the distance: (1) Euclidean (2) Manhatten (3) Cosine (4) Jaccard Coefficient (5) MinKowski 
+```{r}
+# Euclidean distance
+euclidean_distance <- function(a, b) {
+    
+    # We check that they have the same number of observation
+    
+    if (length(a) == length(b)) {
+        sqrt(sum((a-b)^2))
+    } else {
+        stop("Vectors must be of the same length")
+    }
+}
+
+euclidean_distance(1:10, 11:20)
+```
+```{r}
+# Manhattan distance
+manhattan_distance <- function(a, b) {
+    # We check that they have the same number of observation
+    if (length(a) == length(b)) {
+        sum(abs(a-b))
+    } else {
+        stop("Vectors must be of the same length")
+    }
+}
+
+manhattan_distance(1:10, 11:20)
+```
+```{r}
+# Cosine similarity
+cos_similarity <- function(a, b) {
+    if (length(a) == length(b)) {
+        num = sum(a * b, na.rm = T)
+        den = sqrt(sum(a^2, na.rm = T)) * sqrt(sum(b^2, na.rm = T))
+        result = num/den
+        1 - result # because cos(0)=1
+    } else {
+        stop (1:10, 11:20)
+    }
+}
+
+cos_similarity(1:10, 11:20)
+```
+
+```{r}
+# measure the degree of similarity of two vectors
+# all values are equal = 1
+# all values are different = 0
+jaccard <- function(a, b) {
+    
+    if (length(a) == length(b)) {
+        intersection <- length(intersect(a,b))
+        union <- length(a) + length(b) - intersection
+        intersection/union
+    } else {
+        stop("Vectors must be of the same length")
+    }
+}
+
+jaccard(1:10, 11:20)
+```
+```{r}
+minkowski_distance <- function(a, b, p) {
+
+# p=1, Manhattan distance
+# p=2, Euclidean distance
+            
+    if (p <= 0) {
+        stop("p must be higher than 0")
+    }
+    
+    if (length(a) == length(b)) {
+        sum(abs(a-b)^p)^(1/p)
+    } else {
+        stop("Vectors must be of the same length")
+    }
+}
+
+(minkowski_distance(1:10, 11:20, 1))
+(minkowski_distance(1:10, 11:20, 2))
+```
+We need to based on the type of data, the dimensions, and the business objective to decide which method we are going to use. For example, Manhattan is good for the closet route that a taxi must take.  
+
+## Find the k nearest neighbors  
+The process includes: (1) Check the number of observations is the same (2) Calculate distance (3) Find the closest neighbors. 
+In the following, we use Boston house price data to demo KNN:
+```{r, warning=FALSE, message=FALSE}
+library(MASS)
+data(Boston)
+str(Boston)
+```
+```{r}
+library(caret)
+set.seed(1)
+
+model <- train(
+    medv ~ .,
+    data = Boston,
+    method = "knn"
+)
+
+model
+```
+```{r}
+plot(model)
+```
+
+Caret provide preprocessing method before we run our data. 
+```{r}
+set.seed(1)
+
+model2 <- train(
+    medv ~ .,
+    data = Boston,
+    method = "knn",
+    preProcess = c("center", "scale")
+)
+
+model2
+```
+
+Splitting the dataset (prevent overfitting)
+```{r}
+set.seed(1)
+
+inTraining <- createDataPartition(Boston$medv, p = .80, list = FALSE)
+training <- Boston[inTraining, ]
+testing <- Boston[-inTraining, ]
+
+model3 <- train(
+    medv ~., 
+    data = training,
+    method = "knn",
+    preProcess = c("center", "scale")
+)
+
+model3
+```
+See the performance of our model
+```{r}
+test.features <- subset(testing, select=-c(medv))
+test.target <- subset(testing, select=medv)[,1]
+
+predictions = predict(model3, newdata = test.features)
+
+# RMSE
+(sqrt(mean((test.target - predictions)^2)))
+
+# R squared
+(cor(test.target, predictions) ^ 2 )
+
+```
+Cross validation
+```{r}
+set.seed(1)
+
+ctrl <- trainControl(
+    method = "cv",
+    number = 10
+)
+
+model4 <- train(
+    medv ~ .,
+    data = training,
+    method = "knn",
+    preProcess = c("center", "scale"),
+    trControl = ctrl
+)
+
+(model4)
+plot(model4)
+
+# To see if model4 is better than model3
+test.features <- subset(testing, select=-c(medv))
+test.target <- subset(testing, select=medv)[,1]
+
+predictions = predict(model4, newdata = test.features)
+
+# RMSE
+(sqrt(mean((test.target - predictions)^2)))
+
+# R squared
+(cor(test.target, predictions) ^ 2 )
+```
+We use `lambda` to tune the hyper parameters 
+```{r}
+set.seed(1)
+
+tuneGrid <- expand.grid(
+    k = seq(5, 9, by = 1)
+)
+
+model5 <- train(
+    medv ~.,
+    data = training,
+    method = "knn",
+    preProcess = c("center", "scale"),
+    trControl = ctrl,
+    tuneGrid = tuneGrid
+)
+
+(model5)
+plot(model5)
+```
+
