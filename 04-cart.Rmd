@@ -1,6 +1,7 @@
 # CART (Decision Tree)
 `r Sys.Date()` updated  
 Ref: [here](https://www.r-bloggers.com/2021/04/decision-trees-in-r/)  
+Ref: [random forest](https://lgatto.github.io/IntroMachineLearningWithR/supervised-learning.html#scaling-and-centering)  
 Decision Tree can handle classification and regression problem. It is also called CART (Classification and Regression Tree). In the following, we will use spam data and Boston house pricing data to demonstrate.  
 
 ## Classification Tree
@@ -82,4 +83,51 @@ p <- predict(tree, train)
 # R squared
 (cor(train$medv, p))^2
 ```
-In the regression model, the r square value is 80% and RMSE is 4.13, not bad at all.. In this way, you can make use of Decision classification regression tree models.
+In the regression model, the r square value is 80% and RMSE is 4.13, not bad at all.. In this way, you can make use of Decision classification regression tree models.  
+
+## Random Forest  
+```{r}
+library(mlbench)
+data(Sonar)
+(head(Sonar))
+
+set.seed(12)
+model <- train(
+    Class ~.,
+    data = Sonar,
+    method = "ranger"
+)
+```
+```{r}
+print(model)
+```
+```{r}
+plot(model)
+```
+Tune hyperparameters:
+```{r}
+set.seed(42)
+myGrid <- expand.grid(
+    mtry = c(5, 10, 20, 40, 60),
+    splitrule=c("gini", "extratrees"),
+    min.node.size = 1
+)
+
+model <- train(
+    Class ~ .,
+    data = Sonar,
+    method = "ranger",
+    tuneGrid = myGrid,
+    trControl = trainControl(
+        method = "cv",
+        number = 5,
+        verboseIter = FALSE
+    )
+)
+
+print(model)
+```
+```{r}
+plot(model)
+```
+

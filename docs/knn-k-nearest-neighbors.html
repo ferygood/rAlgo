@@ -30,7 +30,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Yao-Chung" />
 
 
-<meta name="date" content="2021-12-22" />
+<meta name="date" content="2021-12-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -149,7 +149,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.1" data-path="ab-test.html"><a href="ab-test.html#scenario"><i class="fa fa-check"></i><b>2.1</b> Scenario</a></li>
 <li class="chapter" data-level="2.2" data-path="ab-test.html"><a href="ab-test.html#case-study"><i class="fa fa-check"></i><b>2.2</b> Case study</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>3</b> K-means</a></li>
+<li class="chapter" data-level="3" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>3</b> K-means</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="k-means.html"><a href="k-means.html#case-1"><i class="fa fa-check"></i><b>3.1</b> Case 1</a></li>
+<li class="chapter" data-level="3.2" data-path="k-means.html"><a href="k-means.html#case-2"><i class="fa fa-check"></i><b>3.2</b> Case 2</a></li>
+<li class="chapter" data-level="3.3" data-path="k-means.html"><a href="k-means.html#hierarchical-clustering"><i class="fa fa-check"></i><b>3.3</b> Hierarchical clustering</a></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="knn-k-nearest-neighbors.html"><a href="knn-k-nearest-neighbors.html"><i class="fa fa-check"></i><b>4</b> kNN (k-Nearest Neighbors)</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="knn-k-nearest-neighbors.html"><a href="knn-k-nearest-neighbors.html#difference-calculating-the-distance-1-euclidean-2-manhatten-3-cosine-4-jaccard-coefficient-5-minkowski"><i class="fa fa-check"></i><b>4.1</b> Difference calculating the distance: (1) Euclidean (2) Manhatten (3) Cosine (4) Jaccard Coefficient (5) MinKowski</a></li>
@@ -158,6 +163,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5" data-path="cart-decision-tree.html"><a href="cart-decision-tree.html"><i class="fa fa-check"></i><b>5</b> CART (Decision Tree)</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="cart-decision-tree.html"><a href="cart-decision-tree.html#classification-tree"><i class="fa fa-check"></i><b>5.1</b> Classification Tree</a></li>
+<li class="chapter" data-level="5.2" data-path="cart-decision-tree.html"><a href="cart-decision-tree.html#random-forest"><i class="fa fa-check"></i><b>5.2</b> Random Forest</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="model-selection.html"><a href="model-selection.html"><i class="fa fa-check"></i><b>6</b> Model selection</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="model-selection.html"><a href="model-selection.html#linear-model"><i class="fa fa-check"></i><b>6.1</b> Linear model</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -181,86 +191,86 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="knn-k-nearest-neighbors" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> kNN (k-Nearest Neighbors)</h1>
-<p>2021-12-22 updated<br />
+<p>2021-12-25 updated<br />
 Ref: <a href="https://anderfernandez.com/en/blog/code-knn-in-r/">distance</a><br />
 Ref: <a href="https://koalatea.io/r-knn-regression/">tutorial</a></p>
 <div id="difference-calculating-the-distance-1-euclidean-2-manhatten-3-cosine-4-jaccard-coefficient-5-minkowski" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Difference calculating the distance: (1) Euclidean (2) Manhatten (3) Cosine (4) Jaccard Coefficient (5) MinKowski</h2>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="knn-k-nearest-neighbors.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Euclidean distance</span></span>
-<span id="cb26-2"><a href="knn-k-nearest-neighbors.html#cb26-2" aria-hidden="true" tabindex="-1"></a>euclidean_distance <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) {</span>
-<span id="cb26-3"><a href="knn-k-nearest-neighbors.html#cb26-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb26-4"><a href="knn-k-nearest-neighbors.html#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We check that they have the same number of observation</span></span>
-<span id="cb26-5"><a href="knn-k-nearest-neighbors.html#cb26-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb26-6"><a href="knn-k-nearest-neighbors.html#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
-<span id="cb26-7"><a href="knn-k-nearest-neighbors.html#cb26-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sqrt</span>(<span class="fu">sum</span>((a<span class="sc">-</span>b)<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb26-8"><a href="knn-k-nearest-neighbors.html#cb26-8" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb26-9"><a href="knn-k-nearest-neighbors.html#cb26-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Vectors must be of the same length&quot;</span>)</span>
-<span id="cb26-10"><a href="knn-k-nearest-neighbors.html#cb26-10" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb26-11"><a href="knn-k-nearest-neighbors.html#cb26-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb26-12"><a href="knn-k-nearest-neighbors.html#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-13"><a href="knn-k-nearest-neighbors.html#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">euclidean_distance</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="knn-k-nearest-neighbors.html#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Euclidean distance</span></span>
+<span id="cb39-2"><a href="knn-k-nearest-neighbors.html#cb39-2" aria-hidden="true" tabindex="-1"></a>euclidean_distance <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) {</span>
+<span id="cb39-3"><a href="knn-k-nearest-neighbors.html#cb39-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-4"><a href="knn-k-nearest-neighbors.html#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We check that they have the same number of observation</span></span>
+<span id="cb39-5"><a href="knn-k-nearest-neighbors.html#cb39-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-6"><a href="knn-k-nearest-neighbors.html#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
+<span id="cb39-7"><a href="knn-k-nearest-neighbors.html#cb39-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sqrt</span>(<span class="fu">sum</span>((a<span class="sc">-</span>b)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb39-8"><a href="knn-k-nearest-neighbors.html#cb39-8" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb39-9"><a href="knn-k-nearest-neighbors.html#cb39-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Vectors must be of the same length&quot;</span>)</span>
+<span id="cb39-10"><a href="knn-k-nearest-neighbors.html#cb39-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb39-11"><a href="knn-k-nearest-neighbors.html#cb39-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb39-12"><a href="knn-k-nearest-neighbors.html#cb39-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-13"><a href="knn-k-nearest-neighbors.html#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="fu">euclidean_distance</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
 <pre><code>## [1] 31.62278</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="knn-k-nearest-neighbors.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manhattan distance</span></span>
-<span id="cb28-2"><a href="knn-k-nearest-neighbors.html#cb28-2" aria-hidden="true" tabindex="-1"></a>manhattan_distance <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) {</span>
-<span id="cb28-3"><a href="knn-k-nearest-neighbors.html#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We check that they have the same number of observation</span></span>
-<span id="cb28-4"><a href="knn-k-nearest-neighbors.html#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
-<span id="cb28-5"><a href="knn-k-nearest-neighbors.html#cb28-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(<span class="fu">abs</span>(a<span class="sc">-</span>b))</span>
-<span id="cb28-6"><a href="knn-k-nearest-neighbors.html#cb28-6" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb28-7"><a href="knn-k-nearest-neighbors.html#cb28-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Vectors must be of the same length&quot;</span>)</span>
-<span id="cb28-8"><a href="knn-k-nearest-neighbors.html#cb28-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb28-9"><a href="knn-k-nearest-neighbors.html#cb28-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb28-10"><a href="knn-k-nearest-neighbors.html#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-11"><a href="knn-k-nearest-neighbors.html#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="fu">manhattan_distance</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="knn-k-nearest-neighbors.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manhattan distance</span></span>
+<span id="cb41-2"><a href="knn-k-nearest-neighbors.html#cb41-2" aria-hidden="true" tabindex="-1"></a>manhattan_distance <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) {</span>
+<span id="cb41-3"><a href="knn-k-nearest-neighbors.html#cb41-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We check that they have the same number of observation</span></span>
+<span id="cb41-4"><a href="knn-k-nearest-neighbors.html#cb41-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
+<span id="cb41-5"><a href="knn-k-nearest-neighbors.html#cb41-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(<span class="fu">abs</span>(a<span class="sc">-</span>b))</span>
+<span id="cb41-6"><a href="knn-k-nearest-neighbors.html#cb41-6" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb41-7"><a href="knn-k-nearest-neighbors.html#cb41-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Vectors must be of the same length&quot;</span>)</span>
+<span id="cb41-8"><a href="knn-k-nearest-neighbors.html#cb41-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb41-9"><a href="knn-k-nearest-neighbors.html#cb41-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-10"><a href="knn-k-nearest-neighbors.html#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="knn-k-nearest-neighbors.html#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="fu">manhattan_distance</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
 <pre><code>## [1] 100</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="knn-k-nearest-neighbors.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cosine similarity</span></span>
-<span id="cb30-2"><a href="knn-k-nearest-neighbors.html#cb30-2" aria-hidden="true" tabindex="-1"></a>cos_similarity <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) {</span>
-<span id="cb30-3"><a href="knn-k-nearest-neighbors.html#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
-<span id="cb30-4"><a href="knn-k-nearest-neighbors.html#cb30-4" aria-hidden="true" tabindex="-1"></a>        num <span class="ot">=</span> <span class="fu">sum</span>(a <span class="sc">*</span> b, <span class="at">na.rm =</span> T)</span>
-<span id="cb30-5"><a href="knn-k-nearest-neighbors.html#cb30-5" aria-hidden="true" tabindex="-1"></a>        den <span class="ot">=</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(a<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> T)) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(b<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> T))</span>
-<span id="cb30-6"><a href="knn-k-nearest-neighbors.html#cb30-6" aria-hidden="true" tabindex="-1"></a>        result <span class="ot">=</span> num<span class="sc">/</span>den</span>
-<span id="cb30-7"><a href="knn-k-nearest-neighbors.html#cb30-7" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span> <span class="sc">-</span> result <span class="co"># because cos(0)=1</span></span>
-<span id="cb30-8"><a href="knn-k-nearest-neighbors.html#cb30-8" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb30-9"><a href="knn-k-nearest-neighbors.html#cb30-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span>
-<span id="cb30-10"><a href="knn-k-nearest-neighbors.html#cb30-10" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb30-11"><a href="knn-k-nearest-neighbors.html#cb30-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb30-12"><a href="knn-k-nearest-neighbors.html#cb30-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-13"><a href="knn-k-nearest-neighbors.html#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cos_similarity</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="knn-k-nearest-neighbors.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cosine similarity</span></span>
+<span id="cb43-2"><a href="knn-k-nearest-neighbors.html#cb43-2" aria-hidden="true" tabindex="-1"></a>cos_similarity <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) {</span>
+<span id="cb43-3"><a href="knn-k-nearest-neighbors.html#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
+<span id="cb43-4"><a href="knn-k-nearest-neighbors.html#cb43-4" aria-hidden="true" tabindex="-1"></a>        num <span class="ot">=</span> <span class="fu">sum</span>(a <span class="sc">*</span> b, <span class="at">na.rm =</span> T)</span>
+<span id="cb43-5"><a href="knn-k-nearest-neighbors.html#cb43-5" aria-hidden="true" tabindex="-1"></a>        den <span class="ot">=</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(a<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> T)) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(b<span class="sc">^</span><span class="dv">2</span>, <span class="at">na.rm =</span> T))</span>
+<span id="cb43-6"><a href="knn-k-nearest-neighbors.html#cb43-6" aria-hidden="true" tabindex="-1"></a>        result <span class="ot">=</span> num<span class="sc">/</span>den</span>
+<span id="cb43-7"><a href="knn-k-nearest-neighbors.html#cb43-7" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span> <span class="sc">-</span> result <span class="co"># because cos(0)=1</span></span>
+<span id="cb43-8"><a href="knn-k-nearest-neighbors.html#cb43-8" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb43-9"><a href="knn-k-nearest-neighbors.html#cb43-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span>
+<span id="cb43-10"><a href="knn-k-nearest-neighbors.html#cb43-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb43-11"><a href="knn-k-nearest-neighbors.html#cb43-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-12"><a href="knn-k-nearest-neighbors.html#cb43-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-13"><a href="knn-k-nearest-neighbors.html#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cos_similarity</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
 <pre><code>## [1] 0.0440877</code></pre>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="knn-k-nearest-neighbors.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># measure the degree of similarity of two vectors</span></span>
-<span id="cb32-2"><a href="knn-k-nearest-neighbors.html#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># all values are equal = 1</span></span>
-<span id="cb32-3"><a href="knn-k-nearest-neighbors.html#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># all values are different = 0</span></span>
-<span id="cb32-4"><a href="knn-k-nearest-neighbors.html#cb32-4" aria-hidden="true" tabindex="-1"></a>jaccard <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) {</span>
-<span id="cb32-5"><a href="knn-k-nearest-neighbors.html#cb32-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb32-6"><a href="knn-k-nearest-neighbors.html#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
-<span id="cb32-7"><a href="knn-k-nearest-neighbors.html#cb32-7" aria-hidden="true" tabindex="-1"></a>        intersection <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">intersect</span>(a,b))</span>
-<span id="cb32-8"><a href="knn-k-nearest-neighbors.html#cb32-8" aria-hidden="true" tabindex="-1"></a>        union <span class="ot">&lt;-</span> <span class="fu">length</span>(a) <span class="sc">+</span> <span class="fu">length</span>(b) <span class="sc">-</span> intersection</span>
-<span id="cb32-9"><a href="knn-k-nearest-neighbors.html#cb32-9" aria-hidden="true" tabindex="-1"></a>        intersection<span class="sc">/</span>union</span>
-<span id="cb32-10"><a href="knn-k-nearest-neighbors.html#cb32-10" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb32-11"><a href="knn-k-nearest-neighbors.html#cb32-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Vectors must be of the same length&quot;</span>)</span>
-<span id="cb32-12"><a href="knn-k-nearest-neighbors.html#cb32-12" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb32-13"><a href="knn-k-nearest-neighbors.html#cb32-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb32-14"><a href="knn-k-nearest-neighbors.html#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-15"><a href="knn-k-nearest-neighbors.html#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="fu">jaccard</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="knn-k-nearest-neighbors.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># measure the degree of similarity of two vectors</span></span>
+<span id="cb45-2"><a href="knn-k-nearest-neighbors.html#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co"># all values are equal = 1</span></span>
+<span id="cb45-3"><a href="knn-k-nearest-neighbors.html#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co"># all values are different = 0</span></span>
+<span id="cb45-4"><a href="knn-k-nearest-neighbors.html#cb45-4" aria-hidden="true" tabindex="-1"></a>jaccard <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) {</span>
+<span id="cb45-5"><a href="knn-k-nearest-neighbors.html#cb45-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb45-6"><a href="knn-k-nearest-neighbors.html#cb45-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
+<span id="cb45-7"><a href="knn-k-nearest-neighbors.html#cb45-7" aria-hidden="true" tabindex="-1"></a>        intersection <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">intersect</span>(a,b))</span>
+<span id="cb45-8"><a href="knn-k-nearest-neighbors.html#cb45-8" aria-hidden="true" tabindex="-1"></a>        union <span class="ot">&lt;-</span> <span class="fu">length</span>(a) <span class="sc">+</span> <span class="fu">length</span>(b) <span class="sc">-</span> intersection</span>
+<span id="cb45-9"><a href="knn-k-nearest-neighbors.html#cb45-9" aria-hidden="true" tabindex="-1"></a>        intersection<span class="sc">/</span>union</span>
+<span id="cb45-10"><a href="knn-k-nearest-neighbors.html#cb45-10" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb45-11"><a href="knn-k-nearest-neighbors.html#cb45-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Vectors must be of the same length&quot;</span>)</span>
+<span id="cb45-12"><a href="knn-k-nearest-neighbors.html#cb45-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb45-13"><a href="knn-k-nearest-neighbors.html#cb45-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb45-14"><a href="knn-k-nearest-neighbors.html#cb45-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-15"><a href="knn-k-nearest-neighbors.html#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="fu">jaccard</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span></code></pre></div>
 <pre><code>## [1] 0</code></pre>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="knn-k-nearest-neighbors.html#cb34-1" aria-hidden="true" tabindex="-1"></a>minkowski_distance <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b, p) {</span>
-<span id="cb34-2"><a href="knn-k-nearest-neighbors.html#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-3"><a href="knn-k-nearest-neighbors.html#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># p=1, Manhattan distance</span></span>
-<span id="cb34-4"><a href="knn-k-nearest-neighbors.html#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># p=2, Euclidean distance</span></span>
-<span id="cb34-5"><a href="knn-k-nearest-neighbors.html#cb34-5" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb34-6"><a href="knn-k-nearest-neighbors.html#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (p <span class="sc">&lt;=</span> <span class="dv">0</span>) {</span>
-<span id="cb34-7"><a href="knn-k-nearest-neighbors.html#cb34-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;p must be higher than 0&quot;</span>)</span>
-<span id="cb34-8"><a href="knn-k-nearest-neighbors.html#cb34-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb34-9"><a href="knn-k-nearest-neighbors.html#cb34-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb34-10"><a href="knn-k-nearest-neighbors.html#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
-<span id="cb34-11"><a href="knn-k-nearest-neighbors.html#cb34-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(<span class="fu">abs</span>(a<span class="sc">-</span>b)<span class="sc">^</span>p)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>p)</span>
-<span id="cb34-12"><a href="knn-k-nearest-neighbors.html#cb34-12" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb34-13"><a href="knn-k-nearest-neighbors.html#cb34-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Vectors must be of the same length&quot;</span>)</span>
-<span id="cb34-14"><a href="knn-k-nearest-neighbors.html#cb34-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb34-15"><a href="knn-k-nearest-neighbors.html#cb34-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb34-16"><a href="knn-k-nearest-neighbors.html#cb34-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-17"><a href="knn-k-nearest-neighbors.html#cb34-17" aria-hidden="true" tabindex="-1"></a>(<span class="fu">minkowski_distance</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>, <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="knn-k-nearest-neighbors.html#cb47-1" aria-hidden="true" tabindex="-1"></a>minkowski_distance <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b, p) {</span>
+<span id="cb47-2"><a href="knn-k-nearest-neighbors.html#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="knn-k-nearest-neighbors.html#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="co"># p=1, Manhattan distance</span></span>
+<span id="cb47-4"><a href="knn-k-nearest-neighbors.html#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co"># p=2, Euclidean distance</span></span>
+<span id="cb47-5"><a href="knn-k-nearest-neighbors.html#cb47-5" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb47-6"><a href="knn-k-nearest-neighbors.html#cb47-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (p <span class="sc">&lt;=</span> <span class="dv">0</span>) {</span>
+<span id="cb47-7"><a href="knn-k-nearest-neighbors.html#cb47-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;p must be higher than 0&quot;</span>)</span>
+<span id="cb47-8"><a href="knn-k-nearest-neighbors.html#cb47-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb47-9"><a href="knn-k-nearest-neighbors.html#cb47-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb47-10"><a href="knn-k-nearest-neighbors.html#cb47-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(a) <span class="sc">==</span> <span class="fu">length</span>(b)) {</span>
+<span id="cb47-11"><a href="knn-k-nearest-neighbors.html#cb47-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sum</span>(<span class="fu">abs</span>(a<span class="sc">-</span>b)<span class="sc">^</span>p)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span>p)</span>
+<span id="cb47-12"><a href="knn-k-nearest-neighbors.html#cb47-12" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb47-13"><a href="knn-k-nearest-neighbors.html#cb47-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;Vectors must be of the same length&quot;</span>)</span>
+<span id="cb47-14"><a href="knn-k-nearest-neighbors.html#cb47-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb47-15"><a href="knn-k-nearest-neighbors.html#cb47-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb47-16"><a href="knn-k-nearest-neighbors.html#cb47-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-17"><a href="knn-k-nearest-neighbors.html#cb47-17" aria-hidden="true" tabindex="-1"></a>(<span class="fu">minkowski_distance</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>, <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>## [1] 100</code></pre>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="knn-k-nearest-neighbors.html#cb36-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">minkowski_distance</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>, <span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="knn-k-nearest-neighbors.html#cb49-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">minkowski_distance</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>, <span class="dv">2</span>))</span></code></pre></div>
 <pre><code>## [1] 31.62278</code></pre>
 <p>We need to based on the type of data, the dimensions, and the business objective to decide which method we are going to use. For example, Manhattan is good for the closet route that a taxi must take.</p>
 </div>
@@ -268,9 +278,9 @@ Ref: <a href="https://koalatea.io/r-knn-regression/">tutorial</a></p>
 <h2><span class="header-section-number">4.2</span> Find the k nearest neighbors</h2>
 <p>The process includes: (1) Check the number of observations is the same (2) Calculate distance (3) Find the closest neighbors.
 In the following, we use Boston house price data to demo KNN:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="knn-k-nearest-neighbors.html#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb38-2"><a href="knn-k-nearest-neighbors.html#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Boston)</span>
-<span id="cb38-3"><a href="knn-k-nearest-neighbors.html#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(Boston)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="knn-k-nearest-neighbors.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb51-2"><a href="knn-k-nearest-neighbors.html#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Boston)</span>
+<span id="cb51-3"><a href="knn-k-nearest-neighbors.html#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(Boston)</span></code></pre></div>
 <pre><code>## &#39;data.frame&#39;:    506 obs. of  14 variables:
 ##  $ crim   : num  0.00632 0.02731 0.02729 0.03237 0.06905 ...
 ##  $ zn     : num  18 0 0 0 0 0 12.5 12.5 12.5 12.5 ...
@@ -286,16 +296,16 @@ In the following, we use Boston house price data to demo KNN:</p>
 ##  $ black  : num  397 397 393 395 397 ...
 ##  $ lstat  : num  4.98 9.14 4.03 2.94 5.33 ...
 ##  $ medv   : num  24 21.6 34.7 33.4 36.2 28.7 22.9 27.1 16.5 18.9 ...</code></pre>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="knn-k-nearest-neighbors.html#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
-<span id="cb40-2"><a href="knn-k-nearest-neighbors.html#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb40-3"><a href="knn-k-nearest-neighbors.html#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-4"><a href="knn-k-nearest-neighbors.html#cb40-4" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
-<span id="cb40-5"><a href="knn-k-nearest-neighbors.html#cb40-5" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span> .,</span>
-<span id="cb40-6"><a href="knn-k-nearest-neighbors.html#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> Boston,</span>
-<span id="cb40-7"><a href="knn-k-nearest-neighbors.html#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span></span>
-<span id="cb40-8"><a href="knn-k-nearest-neighbors.html#cb40-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb40-9"><a href="knn-k-nearest-neighbors.html#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-10"><a href="knn-k-nearest-neighbors.html#cb40-10" aria-hidden="true" tabindex="-1"></a>model</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="knn-k-nearest-neighbors.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb53-2"><a href="knn-k-nearest-neighbors.html#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb53-3"><a href="knn-k-nearest-neighbors.html#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="knn-k-nearest-neighbors.html#cb53-4" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb53-5"><a href="knn-k-nearest-neighbors.html#cb53-5" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span> .,</span>
+<span id="cb53-6"><a href="knn-k-nearest-neighbors.html#cb53-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> Boston,</span>
+<span id="cb53-7"><a href="knn-k-nearest-neighbors.html#cb53-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span></span>
+<span id="cb53-8"><a href="knn-k-nearest-neighbors.html#cb53-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb53-9"><a href="knn-k-nearest-neighbors.html#cb53-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-10"><a href="knn-k-nearest-neighbors.html#cb53-10" aria-hidden="true" tabindex="-1"></a>model</span></code></pre></div>
 <pre><code>## k-Nearest Neighbors 
 ## 
 ## 506 samples
@@ -311,22 +321,23 @@ In the following, we use Boston house price data to demo KNN:</p>
 ##   7  6.709875  0.4771239  4.635036
 ##   9  6.746559  0.4654866  4.690258
 ## 
-## RMSE was used to select the optimal model using
-##  the smallest value.
-## The final value used for the model was k = 7.</code></pre>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="knn-k-nearest-neighbors.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model)</span></code></pre></div>
-<p><img src="R-Algorithm-Notes_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+## RMSE was used to select the optimal
+##  model using the smallest value.
+## The final value used for the model was k
+##  = 7.</code></pre>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="knn-k-nearest-neighbors.html#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model)</span></code></pre></div>
+<p><img src="R-Algorithm-Notes_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
 <p>Caret provide preprocessing method before we run our data.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="knn-k-nearest-neighbors.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb43-2"><a href="knn-k-nearest-neighbors.html#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-3"><a href="knn-k-nearest-neighbors.html#cb43-3" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
-<span id="cb43-4"><a href="knn-k-nearest-neighbors.html#cb43-4" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span> .,</span>
-<span id="cb43-5"><a href="knn-k-nearest-neighbors.html#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> Boston,</span>
-<span id="cb43-6"><a href="knn-k-nearest-neighbors.html#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span>,</span>
-<span id="cb43-7"><a href="knn-k-nearest-neighbors.html#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>, <span class="st">&quot;scale&quot;</span>)</span>
-<span id="cb43-8"><a href="knn-k-nearest-neighbors.html#cb43-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb43-9"><a href="knn-k-nearest-neighbors.html#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-10"><a href="knn-k-nearest-neighbors.html#cb43-10" aria-hidden="true" tabindex="-1"></a>model2</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="knn-k-nearest-neighbors.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb56-2"><a href="knn-k-nearest-neighbors.html#cb56-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-3"><a href="knn-k-nearest-neighbors.html#cb56-3" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb56-4"><a href="knn-k-nearest-neighbors.html#cb56-4" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span> .,</span>
+<span id="cb56-5"><a href="knn-k-nearest-neighbors.html#cb56-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> Boston,</span>
+<span id="cb56-6"><a href="knn-k-nearest-neighbors.html#cb56-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span>,</span>
+<span id="cb56-7"><a href="knn-k-nearest-neighbors.html#cb56-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>, <span class="st">&quot;scale&quot;</span>)</span>
+<span id="cb56-8"><a href="knn-k-nearest-neighbors.html#cb56-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-9"><a href="knn-k-nearest-neighbors.html#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="knn-k-nearest-neighbors.html#cb56-10" aria-hidden="true" tabindex="-1"></a>model2</span></code></pre></div>
 <pre><code>## k-Nearest Neighbors 
 ## 
 ## 506 samples
@@ -342,24 +353,25 @@ In the following, we use Boston house price data to demo KNN:</p>
 ##   7  4.793191  0.7373525  3.043650
 ##   9  4.788986  0.7410578  3.070081
 ## 
-## RMSE was used to select the optimal model using
-##  the smallest value.
-## The final value used for the model was k = 9.</code></pre>
+## RMSE was used to select the optimal
+##  model using the smallest value.
+## The final value used for the model was k
+##  = 9.</code></pre>
 <p>Splitting the dataset (prevent overfitting)</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="knn-k-nearest-neighbors.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb45-2"><a href="knn-k-nearest-neighbors.html#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-3"><a href="knn-k-nearest-neighbors.html#cb45-3" aria-hidden="true" tabindex="-1"></a>inTraining <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(Boston<span class="sc">$</span>medv, <span class="at">p =</span> .<span class="dv">80</span>, <span class="at">list =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb45-4"><a href="knn-k-nearest-neighbors.html#cb45-4" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> Boston[inTraining, ]</span>
-<span id="cb45-5"><a href="knn-k-nearest-neighbors.html#cb45-5" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> Boston[<span class="sc">-</span>inTraining, ]</span>
-<span id="cb45-6"><a href="knn-k-nearest-neighbors.html#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-7"><a href="knn-k-nearest-neighbors.html#cb45-7" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
-<span id="cb45-8"><a href="knn-k-nearest-neighbors.html#cb45-8" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span>., </span>
-<span id="cb45-9"><a href="knn-k-nearest-neighbors.html#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> training,</span>
-<span id="cb45-10"><a href="knn-k-nearest-neighbors.html#cb45-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span>,</span>
-<span id="cb45-11"><a href="knn-k-nearest-neighbors.html#cb45-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>, <span class="st">&quot;scale&quot;</span>)</span>
-<span id="cb45-12"><a href="knn-k-nearest-neighbors.html#cb45-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb45-13"><a href="knn-k-nearest-neighbors.html#cb45-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-14"><a href="knn-k-nearest-neighbors.html#cb45-14" aria-hidden="true" tabindex="-1"></a>model3</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="knn-k-nearest-neighbors.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb58-2"><a href="knn-k-nearest-neighbors.html#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="knn-k-nearest-neighbors.html#cb58-3" aria-hidden="true" tabindex="-1"></a>inTraining <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(Boston<span class="sc">$</span>medv, <span class="at">p =</span> .<span class="dv">80</span>, <span class="at">list =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb58-4"><a href="knn-k-nearest-neighbors.html#cb58-4" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> Boston[inTraining, ]</span>
+<span id="cb58-5"><a href="knn-k-nearest-neighbors.html#cb58-5" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> Boston[<span class="sc">-</span>inTraining, ]</span>
+<span id="cb58-6"><a href="knn-k-nearest-neighbors.html#cb58-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-7"><a href="knn-k-nearest-neighbors.html#cb58-7" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb58-8"><a href="knn-k-nearest-neighbors.html#cb58-8" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span>., </span>
+<span id="cb58-9"><a href="knn-k-nearest-neighbors.html#cb58-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> training,</span>
+<span id="cb58-10"><a href="knn-k-nearest-neighbors.html#cb58-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span>,</span>
+<span id="cb58-11"><a href="knn-k-nearest-neighbors.html#cb58-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>, <span class="st">&quot;scale&quot;</span>)</span>
+<span id="cb58-12"><a href="knn-k-nearest-neighbors.html#cb58-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb58-13"><a href="knn-k-nearest-neighbors.html#cb58-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-14"><a href="knn-k-nearest-neighbors.html#cb58-14" aria-hidden="true" tabindex="-1"></a>model3</span></code></pre></div>
 <pre><code>## k-Nearest Neighbors 
 ## 
 ## 407 samples
@@ -375,38 +387,39 @@ In the following, we use Boston house price data to demo KNN:</p>
 ##   7  5.008726  0.7072326  3.240362
 ##   9  5.049853  0.7042396  3.281286
 ## 
-## RMSE was used to select the optimal model using
-##  the smallest value.
-## The final value used for the model was k = 5.</code></pre>
+## RMSE was used to select the optimal
+##  model using the smallest value.
+## The final value used for the model was k
+##  = 5.</code></pre>
 <p>See the performance of our model</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="knn-k-nearest-neighbors.html#cb47-1" aria-hidden="true" tabindex="-1"></a>test.features <span class="ot">&lt;-</span> <span class="fu">subset</span>(testing, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(medv))</span>
-<span id="cb47-2"><a href="knn-k-nearest-neighbors.html#cb47-2" aria-hidden="true" tabindex="-1"></a>test.target <span class="ot">&lt;-</span> <span class="fu">subset</span>(testing, <span class="at">select=</span>medv)[,<span class="dv">1</span>]</span>
-<span id="cb47-3"><a href="knn-k-nearest-neighbors.html#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-4"><a href="knn-k-nearest-neighbors.html#cb47-4" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">=</span> <span class="fu">predict</span>(model3, <span class="at">newdata =</span> test.features)</span>
-<span id="cb47-5"><a href="knn-k-nearest-neighbors.html#cb47-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-6"><a href="knn-k-nearest-neighbors.html#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="co"># RMSE</span></span>
-<span id="cb47-7"><a href="knn-k-nearest-neighbors.html#cb47-7" aria-hidden="true" tabindex="-1"></a>(<span class="fu">sqrt</span>(<span class="fu">mean</span>((test.target <span class="sc">-</span> predictions)<span class="sc">^</span><span class="dv">2</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="knn-k-nearest-neighbors.html#cb60-1" aria-hidden="true" tabindex="-1"></a>test.features <span class="ot">&lt;-</span> <span class="fu">subset</span>(testing, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(medv))</span>
+<span id="cb60-2"><a href="knn-k-nearest-neighbors.html#cb60-2" aria-hidden="true" tabindex="-1"></a>test.target <span class="ot">&lt;-</span> <span class="fu">subset</span>(testing, <span class="at">select=</span>medv)[,<span class="dv">1</span>]</span>
+<span id="cb60-3"><a href="knn-k-nearest-neighbors.html#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-4"><a href="knn-k-nearest-neighbors.html#cb60-4" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">=</span> <span class="fu">predict</span>(model3, <span class="at">newdata =</span> test.features)</span>
+<span id="cb60-5"><a href="knn-k-nearest-neighbors.html#cb60-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-6"><a href="knn-k-nearest-neighbors.html#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="co"># RMSE</span></span>
+<span id="cb60-7"><a href="knn-k-nearest-neighbors.html#cb60-7" aria-hidden="true" tabindex="-1"></a>(<span class="fu">sqrt</span>(<span class="fu">mean</span>((test.target <span class="sc">-</span> predictions)<span class="sc">^</span><span class="dv">2</span>)))</span></code></pre></div>
 <pre><code>## [1] 4.563839</code></pre>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="knn-k-nearest-neighbors.html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R squared</span></span>
-<span id="cb49-2"><a href="knn-k-nearest-neighbors.html#cb49-2" aria-hidden="true" tabindex="-1"></a>(<span class="fu">cor</span>(test.target, predictions) <span class="sc">^</span> <span class="dv">2</span> )</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="knn-k-nearest-neighbors.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R squared</span></span>
+<span id="cb62-2"><a href="knn-k-nearest-neighbors.html#cb62-2" aria-hidden="true" tabindex="-1"></a>(<span class="fu">cor</span>(test.target, predictions) <span class="sc">^</span> <span class="dv">2</span> )</span></code></pre></div>
 <pre><code>## [1] 0.7814887</code></pre>
 <p>Cross validation</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="knn-k-nearest-neighbors.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb51-2"><a href="knn-k-nearest-neighbors.html#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-3"><a href="knn-k-nearest-neighbors.html#cb51-3" aria-hidden="true" tabindex="-1"></a>ctrl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(</span>
-<span id="cb51-4"><a href="knn-k-nearest-neighbors.html#cb51-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;cv&quot;</span>,</span>
-<span id="cb51-5"><a href="knn-k-nearest-neighbors.html#cb51-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">number =</span> <span class="dv">10</span></span>
-<span id="cb51-6"><a href="knn-k-nearest-neighbors.html#cb51-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-7"><a href="knn-k-nearest-neighbors.html#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-8"><a href="knn-k-nearest-neighbors.html#cb51-8" aria-hidden="true" tabindex="-1"></a>model4 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
-<span id="cb51-9"><a href="knn-k-nearest-neighbors.html#cb51-9" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span> .,</span>
-<span id="cb51-10"><a href="knn-k-nearest-neighbors.html#cb51-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> training,</span>
-<span id="cb51-11"><a href="knn-k-nearest-neighbors.html#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span>,</span>
-<span id="cb51-12"><a href="knn-k-nearest-neighbors.html#cb51-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>, <span class="st">&quot;scale&quot;</span>),</span>
-<span id="cb51-13"><a href="knn-k-nearest-neighbors.html#cb51-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> ctrl</span>
-<span id="cb51-14"><a href="knn-k-nearest-neighbors.html#cb51-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-15"><a href="knn-k-nearest-neighbors.html#cb51-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-16"><a href="knn-k-nearest-neighbors.html#cb51-16" aria-hidden="true" tabindex="-1"></a>(model4)</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="knn-k-nearest-neighbors.html#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb64-2"><a href="knn-k-nearest-neighbors.html#cb64-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-3"><a href="knn-k-nearest-neighbors.html#cb64-3" aria-hidden="true" tabindex="-1"></a>ctrl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(</span>
+<span id="cb64-4"><a href="knn-k-nearest-neighbors.html#cb64-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;cv&quot;</span>,</span>
+<span id="cb64-5"><a href="knn-k-nearest-neighbors.html#cb64-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">number =</span> <span class="dv">10</span></span>
+<span id="cb64-6"><a href="knn-k-nearest-neighbors.html#cb64-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb64-7"><a href="knn-k-nearest-neighbors.html#cb64-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-8"><a href="knn-k-nearest-neighbors.html#cb64-8" aria-hidden="true" tabindex="-1"></a>model4 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb64-9"><a href="knn-k-nearest-neighbors.html#cb64-9" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span> .,</span>
+<span id="cb64-10"><a href="knn-k-nearest-neighbors.html#cb64-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> training,</span>
+<span id="cb64-11"><a href="knn-k-nearest-neighbors.html#cb64-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span>,</span>
+<span id="cb64-12"><a href="knn-k-nearest-neighbors.html#cb64-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>, <span class="st">&quot;scale&quot;</span>),</span>
+<span id="cb64-13"><a href="knn-k-nearest-neighbors.html#cb64-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> ctrl</span>
+<span id="cb64-14"><a href="knn-k-nearest-neighbors.html#cb64-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb64-15"><a href="knn-k-nearest-neighbors.html#cb64-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-16"><a href="knn-k-nearest-neighbors.html#cb64-16" aria-hidden="true" tabindex="-1"></a>(model4)</span></code></pre></div>
 <pre><code>## k-Nearest Neighbors 
 ## 
 ## 407 samples
@@ -422,40 +435,41 @@ In the following, we use Boston house price data to demo KNN:</p>
 ##   7  4.734625  0.7404093  3.151517
 ##   9  4.677503  0.7508160  3.156651
 ## 
-## RMSE was used to select the optimal model using
-##  the smallest value.
-## The final value used for the model was k = 5.</code></pre>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="knn-k-nearest-neighbors.html#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model4)</span></code></pre></div>
-<p><img src="R-Algorithm-Notes_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="knn-k-nearest-neighbors.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To see if model4 is better than model3</span></span>
-<span id="cb54-2"><a href="knn-k-nearest-neighbors.html#cb54-2" aria-hidden="true" tabindex="-1"></a>test.features <span class="ot">&lt;-</span> <span class="fu">subset</span>(testing, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(medv))</span>
-<span id="cb54-3"><a href="knn-k-nearest-neighbors.html#cb54-3" aria-hidden="true" tabindex="-1"></a>test.target <span class="ot">&lt;-</span> <span class="fu">subset</span>(testing, <span class="at">select=</span>medv)[,<span class="dv">1</span>]</span>
-<span id="cb54-4"><a href="knn-k-nearest-neighbors.html#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-5"><a href="knn-k-nearest-neighbors.html#cb54-5" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">=</span> <span class="fu">predict</span>(model4, <span class="at">newdata =</span> test.features)</span>
-<span id="cb54-6"><a href="knn-k-nearest-neighbors.html#cb54-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-7"><a href="knn-k-nearest-neighbors.html#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="co"># RMSE</span></span>
-<span id="cb54-8"><a href="knn-k-nearest-neighbors.html#cb54-8" aria-hidden="true" tabindex="-1"></a>(<span class="fu">sqrt</span>(<span class="fu">mean</span>((test.target <span class="sc">-</span> predictions)<span class="sc">^</span><span class="dv">2</span>)))</span></code></pre></div>
+## RMSE was used to select the optimal
+##  model using the smallest value.
+## The final value used for the model was k
+##  = 5.</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="knn-k-nearest-neighbors.html#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model4)</span></code></pre></div>
+<p><img src="R-Algorithm-Notes_files/figure-html/unnamed-chunk-68-1.png" width="672" /></p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="knn-k-nearest-neighbors.html#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To see if model4 is better than model3</span></span>
+<span id="cb67-2"><a href="knn-k-nearest-neighbors.html#cb67-2" aria-hidden="true" tabindex="-1"></a>test.features <span class="ot">&lt;-</span> <span class="fu">subset</span>(testing, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(medv))</span>
+<span id="cb67-3"><a href="knn-k-nearest-neighbors.html#cb67-3" aria-hidden="true" tabindex="-1"></a>test.target <span class="ot">&lt;-</span> <span class="fu">subset</span>(testing, <span class="at">select=</span>medv)[,<span class="dv">1</span>]</span>
+<span id="cb67-4"><a href="knn-k-nearest-neighbors.html#cb67-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-5"><a href="knn-k-nearest-neighbors.html#cb67-5" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">=</span> <span class="fu">predict</span>(model4, <span class="at">newdata =</span> test.features)</span>
+<span id="cb67-6"><a href="knn-k-nearest-neighbors.html#cb67-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-7"><a href="knn-k-nearest-neighbors.html#cb67-7" aria-hidden="true" tabindex="-1"></a><span class="co"># RMSE</span></span>
+<span id="cb67-8"><a href="knn-k-nearest-neighbors.html#cb67-8" aria-hidden="true" tabindex="-1"></a>(<span class="fu">sqrt</span>(<span class="fu">mean</span>((test.target <span class="sc">-</span> predictions)<span class="sc">^</span><span class="dv">2</span>)))</span></code></pre></div>
 <pre><code>## [1] 4.563839</code></pre>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="knn-k-nearest-neighbors.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R squared</span></span>
-<span id="cb56-2"><a href="knn-k-nearest-neighbors.html#cb56-2" aria-hidden="true" tabindex="-1"></a>(<span class="fu">cor</span>(test.target, predictions) <span class="sc">^</span> <span class="dv">2</span> )</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="knn-k-nearest-neighbors.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R squared</span></span>
+<span id="cb69-2"><a href="knn-k-nearest-neighbors.html#cb69-2" aria-hidden="true" tabindex="-1"></a>(<span class="fu">cor</span>(test.target, predictions) <span class="sc">^</span> <span class="dv">2</span> )</span></code></pre></div>
 <pre><code>## [1] 0.7814887</code></pre>
 <p>We use <code>lambda</code> to tune the hyper parameters</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="knn-k-nearest-neighbors.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb58-2"><a href="knn-k-nearest-neighbors.html#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-3"><a href="knn-k-nearest-neighbors.html#cb58-3" aria-hidden="true" tabindex="-1"></a>tuneGrid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
-<span id="cb58-4"><a href="knn-k-nearest-neighbors.html#cb58-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">k =</span> <span class="fu">seq</span>(<span class="dv">5</span>, <span class="dv">9</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
-<span id="cb58-5"><a href="knn-k-nearest-neighbors.html#cb58-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb58-6"><a href="knn-k-nearest-neighbors.html#cb58-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-7"><a href="knn-k-nearest-neighbors.html#cb58-7" aria-hidden="true" tabindex="-1"></a>model5 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
-<span id="cb58-8"><a href="knn-k-nearest-neighbors.html#cb58-8" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span>.,</span>
-<span id="cb58-9"><a href="knn-k-nearest-neighbors.html#cb58-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> training,</span>
-<span id="cb58-10"><a href="knn-k-nearest-neighbors.html#cb58-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span>,</span>
-<span id="cb58-11"><a href="knn-k-nearest-neighbors.html#cb58-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>, <span class="st">&quot;scale&quot;</span>),</span>
-<span id="cb58-12"><a href="knn-k-nearest-neighbors.html#cb58-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> ctrl,</span>
-<span id="cb58-13"><a href="knn-k-nearest-neighbors.html#cb58-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">tuneGrid =</span> tuneGrid</span>
-<span id="cb58-14"><a href="knn-k-nearest-neighbors.html#cb58-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb58-15"><a href="knn-k-nearest-neighbors.html#cb58-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-16"><a href="knn-k-nearest-neighbors.html#cb58-16" aria-hidden="true" tabindex="-1"></a>(model5)</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="knn-k-nearest-neighbors.html#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb71-2"><a href="knn-k-nearest-neighbors.html#cb71-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-3"><a href="knn-k-nearest-neighbors.html#cb71-3" aria-hidden="true" tabindex="-1"></a>tuneGrid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb71-4"><a href="knn-k-nearest-neighbors.html#cb71-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">k =</span> <span class="fu">seq</span>(<span class="dv">5</span>, <span class="dv">9</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb71-5"><a href="knn-k-nearest-neighbors.html#cb71-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb71-6"><a href="knn-k-nearest-neighbors.html#cb71-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-7"><a href="knn-k-nearest-neighbors.html#cb71-7" aria-hidden="true" tabindex="-1"></a>model5 <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb71-8"><a href="knn-k-nearest-neighbors.html#cb71-8" aria-hidden="true" tabindex="-1"></a>    medv <span class="sc">~</span>.,</span>
+<span id="cb71-9"><a href="knn-k-nearest-neighbors.html#cb71-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> training,</span>
+<span id="cb71-10"><a href="knn-k-nearest-neighbors.html#cb71-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;knn&quot;</span>,</span>
+<span id="cb71-11"><a href="knn-k-nearest-neighbors.html#cb71-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>, <span class="st">&quot;scale&quot;</span>),</span>
+<span id="cb71-12"><a href="knn-k-nearest-neighbors.html#cb71-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">trControl =</span> ctrl,</span>
+<span id="cb71-13"><a href="knn-k-nearest-neighbors.html#cb71-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">tuneGrid =</span> tuneGrid</span>
+<span id="cb71-14"><a href="knn-k-nearest-neighbors.html#cb71-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb71-15"><a href="knn-k-nearest-neighbors.html#cb71-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-16"><a href="knn-k-nearest-neighbors.html#cb71-16" aria-hidden="true" tabindex="-1"></a>(model5)</span></code></pre></div>
 <pre><code>## k-Nearest Neighbors 
 ## 
 ## 407 samples
@@ -473,11 +487,12 @@ In the following, we use Boston house price data to demo KNN:</p>
 ##   8  4.656271  0.7508317  3.133727
 ##   9  4.677503  0.7508160  3.156651
 ## 
-## RMSE was used to select the optimal model using
-##  the smallest value.
-## The final value used for the model was k = 5.</code></pre>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="knn-k-nearest-neighbors.html#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model5)</span></code></pre></div>
-<p><img src="R-Algorithm-Notes_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+## RMSE was used to select the optimal
+##  model using the smallest value.
+## The final value used for the model was k
+##  = 5.</code></pre>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="knn-k-nearest-neighbors.html#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model5)</span></code></pre></div>
+<p><img src="R-Algorithm-Notes_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
 
 </div>
 </div>

@@ -30,7 +30,7 @@ set in the _output.yml file.</p>" />
 <meta name="author" content="Yao-Chung" />
 
 
-<meta name="date" content="2021-12-22" />
+<meta name="date" content="2021-12-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -149,7 +149,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.1" data-path="ab-test.html"><a href="ab-test.html#scenario"><i class="fa fa-check"></i><b>2.1</b> Scenario</a></li>
 <li class="chapter" data-level="2.2" data-path="ab-test.html"><a href="ab-test.html#case-study"><i class="fa fa-check"></i><b>2.2</b> Case study</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>3</b> K-means</a></li>
+<li class="chapter" data-level="3" data-path="k-means.html"><a href="k-means.html"><i class="fa fa-check"></i><b>3</b> K-means</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="k-means.html"><a href="k-means.html#case-1"><i class="fa fa-check"></i><b>3.1</b> Case 1</a></li>
+<li class="chapter" data-level="3.2" data-path="k-means.html"><a href="k-means.html#case-2"><i class="fa fa-check"></i><b>3.2</b> Case 2</a></li>
+<li class="chapter" data-level="3.3" data-path="k-means.html"><a href="k-means.html#hierarchical-clustering"><i class="fa fa-check"></i><b>3.3</b> Hierarchical clustering</a></li>
+</ul></li>
 <li class="chapter" data-level="4" data-path="knn-k-nearest-neighbors.html"><a href="knn-k-nearest-neighbors.html"><i class="fa fa-check"></i><b>4</b> kNN (k-Nearest Neighbors)</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="knn-k-nearest-neighbors.html"><a href="knn-k-nearest-neighbors.html#difference-calculating-the-distance-1-euclidean-2-manhatten-3-cosine-4-jaccard-coefficient-5-minkowski"><i class="fa fa-check"></i><b>4.1</b> Difference calculating the distance: (1) Euclidean (2) Manhatten (3) Cosine (4) Jaccard Coefficient (5) MinKowski</a></li>
@@ -158,6 +163,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5" data-path="cart-decision-tree.html"><a href="cart-decision-tree.html"><i class="fa fa-check"></i><b>5</b> CART (Decision Tree)</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="cart-decision-tree.html"><a href="cart-decision-tree.html#classification-tree"><i class="fa fa-check"></i><b>5.1</b> Classification Tree</a></li>
+<li class="chapter" data-level="5.2" data-path="cart-decision-tree.html"><a href="cart-decision-tree.html#random-forest"><i class="fa fa-check"></i><b>5.2</b> Random Forest</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="model-selection.html"><a href="model-selection.html"><i class="fa fa-check"></i><b>6</b> Model selection</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="model-selection.html"><a href="model-selection.html#linear-model"><i class="fa fa-check"></i><b>6.1</b> Linear model</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -181,7 +191,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="ab-test" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> A/B test</h1>
-<p>2021-12-22 updated</p>
+<p>2021-12-25 updated</p>
 <p>A/B test is used for testing which version of product can give you a preferable outcome by setting two versions of a product/test with <strong>only one</strong> variable is different (which is version A and version B). A is usually the “current version” and B is often the “improved version”.</p>
 <div id="scenario" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Scenario</h2>
@@ -200,10 +210,10 @@ Send these message to a population and see which one get more clicks or sell mor
 <span id="cb1-4"><a href="ab-test.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df)</span></code></pre></div>
 <pre><code>## Rows: 1,451
 ## Columns: 4
-## $ variant        &lt;chr&gt; &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;…
-## $ converted      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, …
-## $ length_of_stay &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-## $ revenue        &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.00…</code></pre>
+## $ variant        &lt;chr&gt; &quot;A&quot;, &quot;A&quot;, &quot;A&quot;, &quot;A&quot;…
+## $ converted      &lt;lgl&gt; FALSE, FALSE, FALS…
+## $ length_of_stay &lt;dbl&gt; 0, 0, 0, 0, 0, 0, …
+## $ revenue        &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0…</code></pre>
 <p><em>variant A</em>: current website (control group)<br />
 <em>variant B</em>: experimental group (to see if new feature increase the conversion)<br />
 <em>converted</em>: if <strong>TRUE</strong>, it means that the customer completes bookings and it’s going to show <strong>FALSE</strong> when the customer visits the sites but not makes a booking.</p>
@@ -305,16 +315,26 @@ Send these message to a population and see which one get more clicks or sell mor
 <span id="cb11-21"><a href="ab-test.html#cb11-21" aria-hidden="true" tabindex="-1"></a>    ci[<span class="dv">2</span>]</span>
 <span id="cb11-22"><a href="ab-test.html#cb11-22" aria-hidden="true" tabindex="-1"></a>  ))</span>
 <span id="cb11-23"><a href="ab-test.html#cb11-23" aria-hidden="true" tabindex="-1"></a>vis_result_pool</span></code></pre></div>
-<pre><code>##                         metric        value
-## 1         Estimated Difference  0.022945680
-## 2           Relative Uplift(%) 82.719178082
-## 3     pooled sample proportion  0.039283253
-## 4 Standard Error of Difference  0.010200138
-## 5                      z_score  2.249546089
-## 6                      p-value  0.024477774
-## 7              Margin of Error  0.019991903
-## 8                     CI-lower  0.002953777
-## 9                     CI-upper  0.042937584</code></pre>
+<pre><code>##                         metric
+## 1         Estimated Difference
+## 2           Relative Uplift(%)
+## 3     pooled sample proportion
+## 4 Standard Error of Difference
+## 5                      z_score
+## 6                      p-value
+## 7              Margin of Error
+## 8                     CI-lower
+## 9                     CI-upper
+##          value
+## 1  0.022945680
+## 2 82.719178082
+## 3  0.039283253
+## 4  0.010200138
+## 5  2.249546089
+## 6  0.024477774
+## 7  0.019991903
+## 8  0.002953777
+## 9  0.042937584</code></pre>
 <blockquote>
 <p><strong>Recommendation and Conclusion</strong><br />
 * Variant A has 20 conversions and 721 hits whereas Variant B has 37 conversions and 730 hits.<br />

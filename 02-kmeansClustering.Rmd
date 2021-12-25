@@ -1,6 +1,7 @@
 # K-means
 `r Sys.Date()` updated  
 
+## Case 1
 K-means clustering: It is a method to cluster n points into k clusters based on the means of shortest distance. (cautsion: do not confused it with K-nearest clustering). We use the demo data sets "USArrests".
 
 ```{r, warning=FALSE}
@@ -43,5 +44,43 @@ fviz_cluster(km.res, df, palette="Set2", ggtheme = theme_minimal())
 #points(km.res$centers, col = 1:2, pch = 8, cex=2)
 ```
 
-Reference: [here](https://www.datanovia.com/en/lessons/k-means-clustering-in-r-algorith-and-practical-examples/)
+Reference: [here](https://www.datanovia.com/en/lessons/k-means-clustering-in-r-algorith-and-practical-examples/)  
+
+## Case 2
+Use iris data for a second demo
+```{r}
+str(iris)
+```
+We use the features with "Length" to do a kmeans clustering:
+```{r}
+i <- grep("Length", names(iris))
+x <- iris[, i]
+cl <- kmeans(x, centers = 3, nstart = 10)
+plot(x, col = cl$cluster)
+```
+
+## Hierarchical clustering
+```{r}
+d <- dist(iris[, 1:4]) # calculate the euclidean distance
+hcl <- hclust(d)
+hcl
+```
+```{r}
+plot(hcl)
+```
+
+Usually, you will need to cut the tree to define the clusters with `cutree()`.
+```{r}
+(cutree(hcl, h=1.5)) # at certain height
+cutree(hcl, k=2) # with certain number of clusters
+```
+```{r}
+plot(hcl)
+abline(h = 3.9, col="blue")
+```
+
+You can check the result using `identical()`
+```{r}
+identical(cutree(hcl, k=3), cutree(hcl, h=3.9))
+```
 

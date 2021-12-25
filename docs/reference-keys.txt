@@ -3,8 +3,14 @@ ab-test
 scenario
 case-study
 k-means
+case-1
+case-2
+hierarchical-clustering
 knn-k-nearest-neighbors
 difference-calculating-the-distance-1-euclidean-2-manhatten-3-cosine-4-jaccard-coefficient-5-minkowski
 find-the-k-nearest-neighbors
 cart-decision-tree
 classification-tree
+random-forest
+model-selection
+linear-model

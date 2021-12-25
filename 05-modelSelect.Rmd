@@ -1,0 +1,49 @@
+# Model selection  
+Ref: [here](https://lgatto.github.io/IntroMachineLearningWithR/supervised-learning.html#scaling-and-centering)  
+
+In this section, we demonstrate how to compare the performance between different models. So the first step is to create a training and testing dataset.
+```{r}
+library(C50)
+data("mlc_churn")
+table(mlc_churn$churn)/nrow(mlc_churn)
+```
+We see that about 15% of the customers churn. It is important to maintain this proportion in all of the folds.
+```{r}
+myFolds <- createFolds(mlc_churn$churn, k=5)
+str(myFolds)
+
+# verify
+sapply(myFolds, function(i){
+    table(mlc_churn$churn[i])/length(i)
+})
+```
+```{r}
+myControl <- trainControl(
+    summaryFunction = twoClassSummary,
+    classProb = TRUE,
+    verboseIter = FALSE,
+    savePredictions = TRUE,
+    index = myFolds
+)
+```
+
+## Linear model
+```{r}
+glm_model <- train(
+    churn ~.,
+    mlc_churn,
+    metric = "ROC",
+    method = "glmnet",
+    tuneGrid = expand.grid(
+        alpha = 0:1,
+        lambda = 0:10/10
+    ),
+    trControl = myControl
+)
+
+print(glm_model)
+```
+```{r}
+plot(glm_model)
+```
+
